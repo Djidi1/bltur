@@ -1,0 +1,214 @@
+.poping_links{display:block;width:100%;position:relative;overflow:hidden;color:#00bff3;font:normal 12px/17px "Trebuchet MS",Arial,Helvetica,sans-serif;}
+.poping_links span{display:none;}.moduletable_LoginForm{margin:0;padding:0 0 0 0px;background:none;border-left:none;overflow:hidden;text-align:left;width:320px;height:60px;position:absolute;right:3px;top:5px;z-index:1000;text-align:right;}#form-login{overflow:hidden;padding-top:6px;text-align:left;color:#000;text-transform:none;font-weight:normal;font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;}#form-login span{display:block;padding-bottom:5px;}#login_pop .button{border:none!important;font-size:12px;font-family:Arial,Helvetica,sans-serif;font-weight:normal;letter-spacing:0px;line-height:22px!important;vertical-align:top;display:block;background:#000;color:#fff!important;text-transform:none;width:56px;vertical-align:middle;height:24px;padding:0 0 0 0px;margin:0px 0px 0 0px;text-align:center;position:relative;}#login_pop .button:hover{background:#393185;color:#fff!important;text-decoration:none;}@-moz-document url-prefix() {
+  #login_pop .button { padding-bottom:3px;}
+}
+		
+/* opening buttons*/
+#openLogin, #openHome {
+	display:inline-block;
+	height:auto;
+	width:auto;
+	text-align:left;
+	background:none;
+	border:none;
+	color:#b4b3b3;
+	text-decoration:none;
+	margin:0;
+	font:normal 11px/17px Arial, Helvetica, sans-serif;
+	text-transform:none;
+}
+#openLogin { background:url(../images/divider.png) left 5px no-repeat; padding-left:11px;}
+#openHome { padding-right:5px;}
+#openLogin:hover, #openHome:hover {
+	color:#000;
+	text-decoration:none;
+}
+
+/* login box*/
+#login_pop {
+/*	position:fixed!important;
+	width:250px;
+	height:225px;
+	right:auto!important;
+	margin-left:-282px!important;
+	color:#ccc;
+	text-align:left;
+	padding:10px;
+	z-index:1000000;
+	border-radius:3px;*/
+}
+/* registration box */
+#reg_pop {
+	position:fixed;
+	width:455px;
+	height:275px;
+	top:250px;
+	background:#fff;
+	color:#ccc;
+	text-align:left;
+	padding:20px 10px 10px 20px;
+	border:10px solid #a82428;
+	z-index:1000000;
+	border-radius:3px;
+}
+#reg_pop .popyjreg{
+	overflow:hidden;
+	display:block;
+}
+#reg_pop .popyjreg_ins{
+	clear:both;
+	overflow:hidden;
+	display:block;
+	padding-top:2px;
+}
+
+#reg_pop .inputbox {
+	width:220px;
+	float:right;
+	margin-bottom:5px;
+	margin-right:40px;
+	margin-top:3px;
+	
+
+}
+.popyjreg_ins #name.inputbox { margin-top:0!important;}
+#reg_pop label{
+	float:left;
+	display:block;
+	color:#000;
+	font:bold 12px/18px Arial, Helvetica, sans-serif;
+	padding-top:6px;
+}
+p.information_td{
+	clear:both;
+	display:block;
+	color:#04225c;
+}
+/* closing buttons*/
+#closeReg, #closeLogin {
+	display:inline-block;
+	width:30px;
+	height:30px;
+	position:absolute;
+	top:5px;
+	right:5px;
+	text-align:center;
+	line-height:25px;
+	background:url(../images/fancy_close.png) left top no-repeat;
+	color:#000;
+	text-decoration:none;
+}
+/* input boxes and rest */
+#yjpop_passwd {
+	margin:0 0 10px 0;
+	color:#7c7c7c;
+}
+#yjpop_username {
+	margin:0 0 5px 0;
+	color:#7c7c7c;
+}
+#yjpop_remember {
+	padding:0; margin:3px 5px 0 0;
+	width:12px; height:12px;
+	float:left;
+	border:none;
+	font:normal 0/0 Arial, Helvetica, sans-serif;
+	vertical-align:middle;
+}
+#login_pop .button {
+	margin:10px 0;
+}
+.Forgot { list-style-type:none; margin:0; padding:0; overflow:hidden;}
+.Forgot li a { font:normal 14px/18px "Trebuchet MS", Arial, Helvetica, sans-serif; color:#000;}
+/* logeedin class */
+#login-form2 { float:right; }
+#logins span {
+	text-align:left !Important;
+	display:inline-block;
+	height:auto !Important;
+	overflow:hidden;
+	clear:both;
+	color:#b4b3b3;
+	padding:0px 10px 0 0;
+	font-size:11px;
+	font-family:Arial, Helvetica, sans-serif;
+}
+#login-form2 .button  {
+	display:inline-block;
+	height:auto;
+	width:auto;
+	text-align:left;
+	background:none;
+	border:none;
+	color:#b4b3b3;
+	text-decoration:none;
+	margin:0;
+	padding:0;
+	font:normal 11px/17px Arial, Helvetica, sans-serif;
+	text-transform:none;
+	float:none;
+	background:none;
+	}
+	#login-form2 .button:hover {
+		background:none;
+		color:#000 !important;
+		text-decoration:none;
+	}
+
+#login-form2 .button {
+	margin:0 0;
+	float:left;
+}
+
+#cpanel {
+text-align:center;
+vertical-align:middle;
+}
+#cpanel div.icon {
+margin:3px;
+}
+#cpanel div.icon a {
+border:1px solid #DDDDDD;
+
+display:block;
+height:93px !important;
+padding:2px 5px 1px;
+text-decoration:none;
+vertical-align:middle;
+width:108px !important;
+
+}
+#cpanel div.icon a:link {
+color:#808080;
+}
+#cpanel div.icon a:hover {
+background-color:#F1E8E6;
+border:1px solid #C24733;
+color:#333333;
+padding:3px 4px 0 6px;
+}
+#cpanel div.icon a:active {
+color:#808080;
+}
+#cpanel div.icon a:visited {
+color: #555555;
+}
+#cpanel div.iconimage {
+padding-top:13px;
+}
+.adminListHeader {
+background-position:left center;
+background-repeat:no-repeat;
+line-height:48px;
+padding-left:80px;
+text-align:center;
+width:350px;
+}
+#cpanel div.icon img {
+margin-top:13px;
+}
+
+#cpanel div.icon span {
+display: block;
+font: bold 10px Verdana;
+}

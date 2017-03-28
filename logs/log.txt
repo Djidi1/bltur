@@ -1,0 +1,1 @@
+<li><span style="color:green;">Отправлено: djidi@mail.ru</span></li>

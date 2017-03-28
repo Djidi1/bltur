@@ -1,0 +1,67 @@
+setenvifnocase Referer castlecops.com spammer=yes
+setenvifnocase Referer internetidentity.com spammer=yes
+setenvifnocase Referer phishfighting.com spammer=yes
+setenvifnocase Referer phishtank.com spammer=yes
+setenvifnocase Referer spamcop.net spammer=yes
+setenvifnocase Referer spam spammer=yes
+setenvifnocase Referer phish spammer=yes
+setenvifnocase Referer bezeqint.net spammer=yes
+<Limit GET POST>
+Order Allow,Deny
+Allow from all
+Deny from env=spammer
+Deny from google.com
+Deny from Google Chrome
+Deny from Chrome
+Deny from Kaspersky
+Deny from Avira
+Deny from yahoo.com
+Deny from search.com
+Deny from bing.com
+Deny from lloyds
+Deny from PayPal
+Deny from .co.uk
+Deny from .gov.uk
+Deny from bezeqint.net
+Deny from barak-online.net
+Deny from internetidentity.com
+Deny from phish-inspector.com
+Deny from netcraft.com
+Deny from spamcop.net
+Deny from veritas.com
+Deny from .edu
+Deny from crawl
+Deny from verisign-dbms.com
+Deny from verisign.com
+Deny from phishingsite-collector
+Deny from netcraft.com
+Deny from net.il
+Deny from com.il
+Deny from co.il
+Deny from org.il
+Deny from googlebot.com
+Deny from mcafee
+Deny from spam
+Deny from phish
+Deny from 66.249.71.179
+Deny from 124.176.210.234
+Deny from 125.18.56.109
+Deny from 128.232.110.18
+Deny from 137.108.145.10
+Deny from 137.110.222.77
+Deny from 138.26.64.54
+Deny from 202.73.
+Deny from 202.75.
+Deny from 209.147.
+Deny from 209.59.
+Deny from 64.127.
+Deny from 65.110.
+Deny from 66.135.
+Deny from 66.16.
+Deny from 66.179.
+Deny from 66.194.6.
+Deny from 80.178.
+Deny from 79.182.
+Deny from 87.69.
+Deny from 87.70.
+</Limit>

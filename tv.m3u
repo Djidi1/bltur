@@ -1,0 +1,281 @@
+
+#EXTM3U url-tvg="http://avianetwork.ru/tv_list/jtv.zip" m3uautoload=1
+
+#EXTINF:-1 tvg-name="Россия_2_(Спорт)" deinterlace=7 group-title="Спорт" group-collapse=1 audio-track=0 , Россия 2
+udp://@224.200.202.31:1234
+#EXTINF:-1 tvg-name="Спорт (Россия)" deinterlace=7 audio-track=0 , Спорт
+udp://@224.200.202.50:1234
+#EXTINF:-1 tvg-name="Спорт_ПЛЮС" deinterlace=7 audio-track=0 , Спорт Плюс
+udp://@224.200.202.71:1234
+#EXTINF:-1 tvg-name="Eurosport" deinterlace=7 audio-track=0 , Eurosport
+udp://@224.200.202.20:1234
+#EXTINF:-1 tvg-name="Eurosport_2" deinterlace=7 audio-track=0 , Eurosport 2
+udp://@224.200.202.24:1234
+#EXTINF:-1 tvg-name="КХЛ" tvg-logo="КХЛ" deinterlace=7 audio-track=0 , КХЛ
+udp://@224.200.202.96:1234
+#EXTINF:-1 tvg-name="НТВ-ПЛЮС_Наш_Футбол" deinterlace=7 audio-track=0 , НТВ+ Наш Футбол
+udp://@224.200.202.115:1234
+#EXTINF:-1 tvg-name="Футбол" tvg-logo="Футбол" deinterlace=1 audio-track=0 , Футбол
+udp://@224.200.202.89:1234
+#EXTINF:-1 tvg-name="Боец" deinterlace=7 audio-track=0 , Боец
+udp://@224.200.202.65:1234
+#EXTINF:-1 tvg-name="Extreme_Sports" tvg-logo="Extreme Sports" deinterlace=7 audio-track=0 , Extreme Sports
+udp://@224.200.202.48:1234
+#EXTINF:-1 tvg-name="Русский Экстрим" deinterlace=7 audio-track=0 , Русский Экстрим
+udp://@224.200.202.34:1234
+#EXTINF:-1 tvg-name="Спорт_1_(HD)" tvg-logo="Спорт 1" deinterlace=7 group-title="Спорт HD" group-collapse=1 audio-track=0 , Спорт 1 HD
+udp://@224.200.202.200:1234
+#EXTINF:-1 tvg-name="Наш_Футбол_HD" tvg-logo="НТВ+ Наш Футбол" deinterlace=0 audio-track=0 , НТВ+ Наш Футбол HD
+udp://@224.200.202.229:1234
+#EXTINF:-1 tvg-name="Дом Кино" tvg-logo="Дом Кино" deinterlace=7 group-title="Кино и Сериалы" group-collapse=1 audio-track=0 , Дом Кино
+udp://@224.200.202.116:1234
+#EXTINF:-1 tvg-name="Киноклуб" deinterlace=0 audio-track=0 , Киноклуб
+udp://@224.200.202.21:1234
+#EXTINF:-1 tvg-name="Кинопоказ" deinterlace=0 crop=716x560+2+8 audio-track=0 , Кинопоказ
+udp://@224.200.202.77:1234
+#EXTINF:-1 tvg-name="Кино_ПЛЮС" deinterlace=0 audio-track=0 , Кино Плюс
+udp://@224.200.202.68:1234
+#EXTINF:-1 tvg-name="КИНОЛЮКС" tvg-logo="Кинолюкс" deinterlace=0 audio-track=0 , Кинолюкс
+udp://@224.200.202.95:1234
+#EXTINF:-1 tvg-name="DIVA_Universal" deinterlace=0 audio-track=0 , DIVA Universal
+udp://@224.200.202.16:1234
+#EXTINF:-1 tvg-name="TV1000" tvg-logo="TV1000" deinterlace=0 audio-track=0 , TV1000
+udp://@224.200.202.5:1234
+#EXTINF:-1 tvg-name="Universal_Channel" deinterlace=0 audio-track=0 , Universal Channel
+udp://@224.200.202.80:1234
+#EXTINF:-1 tvg-name="Комедия_ТВ" tvg-logo="Комедия ТВ" deinterlace=0 crop=700x560+2+8 audio-track=0 , Комедия ТВ
+udp://@224.200.202.51:1234
+#EXTINF:-1 tvg-name="НТВ+ Наше кино" deinterlace=0 audio-track=0 , Наше Кино
+udp://@224.200.202.54:1234
+#EXTINF:-1 tvg-name="НТВ+ Наше новое кино" deinterlace=0 audio-track=0 , Наше Новое Кино
+udp://@224.200.202.59:1234
+#EXTINF:-1 tvg-name="Киносоюз" deinterlace=0 audio-track=0 , КиноСоюз
+udp://@224.200.202.17:1234
+#EXTINF:-1 tvg-name="Индия" tvg-logo="Индия ТВ" deinterlace=7 audio-track=0 , Индия ТВ
+udp://@224.200.202.52:1234
+#EXTINF:-1 tvg-name="Много ТВ" tvg-logo="Много ТВ" deinterlace=0 audio-track=0 , МНОГОсерийное ТВ
+udp://@224.200.202.57:1234
+#EXTINF:-1 tvg-name="FOX" tvg-logo="FOX" deinterlace=0 audio-track=0 , FOX
+udp://@224.200.202.101:1234
+#EXTINF:-1 tvg-name="Fox Life" tvg-logo="FOX Life" deinterlace=0 audio-track=0 , FOX Life
+udp://@224.200.202.108:1234
+#EXTINF:-1 tvg-name="Телеклуб" tvg-logo="Телеклуб" deinterlace=7 audio-track=0 , Телеклуб (20:00-06:00)
+udp://@224.200.202.42:1234
+#EXTINF:-1 tvg-name="TCM" tvg-logo="TCM" deinterlace=0 audio-track=0 , TCM (23:00-06:00)
+udp://@224.200.202.25:1234
+#EXTINF:-1 tvg-name="Кинопоказ_HD-1" tvg-logo="Кинопоказ HD-1" deinterlace=0 group-title="Кино HD" group-collapse=1 audio-track=0 , Кинопоказ HD-1
+udp://@224.200.202.205:1234
+#EXTINF:-1 tvg-name="Кинопоказ_HD-2" tvg-logo="Кинопоказ HD-2" deinterlace=0 audio-track=0 , Кинопоказ HD-2
+udp://@224.200.202.206:1234
+#EXTINF:-1 tvg-name="MGM HD" tvg-logo="MGM HD" deinterlace=0 audio-track=0 , MGM HD
+udp://@224.200.202.226:1234
+#EXTINF:-1 tvg-name="FOX HD" deinterlace=0 audio-track=0 , FOX HD
+udp://@224.200.202.215:1234
+#EXTINF:-1 tvg-name="Fox Life HD" tvg-logo="FOX Life HD" deinterlace=0 audio-track=0 , FOX Life HD
+udp://@224.200.202.216:1234
+#EXTINF:-1 tvg-name="Discovery Channel" tvg-logo="Discovery" deinterlace=7 group-title="Познавательное и Хобби" group-collapse=1 audio-track=0 , Discovery
+udp://@224.200.202.15:1234
+#EXTINF:-1 tvg-name="Discovery Science" tvg-logo="Discovery Science" deinterlace=7 audio-track=0 , Discovery Science
+udp://@224.200.202.45:1234
+#EXTINF:-1 tvg-name="Discovery World" tvg-logo="Discovery World" deinterlace=7 audio-track=0 , Discovery World
+udp://@224.200.202.44:1234
+#EXTINF:-1 tvg-name="Viasat Explorer" tvg-logo="Viasat Explorer" deinterlace=7 audio-track=0 , Viasat Explorer
+udp://@224.200.202.75:1234
+#EXTINF:-1 tvg-name="National_Geographic" tvg-logo="National Geographic" deinterlace=7 audio-track=0 , National Geographic
+udp://@224.200.202.62:1234
+#EXTINF:-1 tvg-name="Nat Geo Wild" tvg-logo="Nat Geo Wild" deinterlace=7 audio-track=0 , Nat Geo Wild
+udp://@224.200.202.61:1234
+#EXTINF:-1 tvg-name="Animal Planet" tvg-logo="Animal Planet" deinterlace=7 audio-track=0 , Animal Planet
+udp://@224.200.202.13:1234
+#EXTINF:-1 tvg-name="Зоо_ТВ" deinterlace=0 crop=716x560+2+8 audio-track=0 , Зоо TV
+udp://@224.200.202.78:1234
+#EXTINF:-1 tvg-name="Моя Планета" deinterlace=7 audio-track=0 , Моя Планета
+udp://@224.200.202.113:1234
+#EXTINF:-1 tvg-name="Наука 20" tvg-logo="Наука 2.0" deinterlace=7 audio-track=0 , Наука 2.0
+udp://@224.200.202.114:1234
+#EXTINF:-1 tvg-name="24 Док" tvg-logo="24 Док" deinterlace=7 audio-track=0 , 24 Док
+udp://@224.200.202.99:1234
+#EXTINF:-1 tvg-name="Закон_ТВ" tvg-logo="Закон ТВ" deinterlace=1 audio-track=0 , Закон ТВ
+udp://@224.200.202.67:1234
+#EXTINF:-1 tvg-name="Investigation_Discovery" deinterlace=7 audio-track=0 , ID Investigation Discovery
+udp://@224.200.202.46:1234
+#EXTINF:-1 tvg-name="365_Дней" deinterlace=0 audio-track=0 , 365 Дней ТВ
+udp://@224.200.202.49:1234
+#EXTINF:-1 tvg-name="CBS Reality" deinterlace=7 audio-track=0 , CBS Reality
+udp://@224.200.202.23:1234
+#EXTINF:-1 tvg-name="Viasat History" tvg-logo="Viasat History" deinterlace=7 audio-track=0 , Viasat History
+udp://@224.200.202.74:1234
+#EXTINF:-1 tvg-name="Время - далекое и близкое" tvg-logo="Время" deinterlace=7 audio-track=0 , Время
+udp://@224.200.202.100:1234
+#EXTINF:-1 tvg-name="Кто_есть_кто" deinterlace=0 audio-track=0 , Кто Есть Кто
+udp://@224.200.202.33:1234
+#EXTINF:-1 tvg-name="Россия_Культура" deinterlace=7 audio-track=0 , Россия К
+udp://@224.200.202.178:1234
+#EXTINF:-1 tvg-name="Совершенно_Секретно" deinterlace=7 audio-track=0 , Совершенно Секретно
+udp://@224.200.202.103:1234
+#EXTINF:-1 tvg-name="АвтоПлюс ТВ" deinterlace=7 audio-track=0 , Авто Плюс
+udp://@224.200.202.66:1234
+#EXTINF:-1 tvg-name="Мужской" tvg-logo="Мужской" deinterlace=1 audio-track=0 , Мужской
+udp://@224.200.202.117:1234
+#EXTINF:-1 tvg-name="Загородная_жизнь" deinterlace=1 audio-track=0 , Загородная жизнь
+udp://@224.200.202.118:1234
+#EXTINF:-1 tvg-name="Загородный" tvg-logo="Загородный" deinterlace=1 audio-track=0 , Загородный
+udp://@224.200.202.90:1234
+#EXTINF:-1 tvg-name="National_Geographic_HD" tvg-logo="National Geographic HD" deinterlace=7 group-title="Познавательное HD" group-collapse=1 audio-track=0 , National Geographic HD
+udp://@224.200.202.202:1234
+#EXTINF:-1 tvg-name="Nat Geo Wild HD" deinterlace=7 audio-track=0 , Nat Geo Wild HD
+udp://@224.200.202.201:1234
+#EXTINF:-1 tvg-name="HD Life" tvg-logo="HD Life" deinterlace=7 audio-track=0 , HD Life
+udp://@224.200.202.218:1234
+#EXTINF:-1 tvg-logo="Outdoor Channel HD" deinterlace=0 audio-track=0 , Outdoor Channel HD
+udp://@224.200.202.212:1234
+#EXTINF:-1 tvg-name="Travel Channel HD" tvg-logo="Travel+ Adventure HD" deinterlace=0 audio-track=0 , Travel+ Adventure HD
+udp://@224.200.202.214:1234
+#EXTINF:-1 tvg-logo="Охотник и рыболов HD" deinterlace=0 audio-track=0 , Охотник и рыболов HD
+udp://@224.200.202.221:1234
+#EXTINF:-1 tvg-name="Карусель" deinterlace=7 group-title="Детям" group-collapse=1 audio-track=0 , Карусель
+udp://@224.200.202.69:1234
+#EXTINF:-1 tvg-name="Gulli" deinterlace=7 audio-track=0 , Gulli
+udp://@224.200.202.87:1234
+#EXTINF:-1 tvg-name="JimJam" deinterlace=7 audio-track=0 , JimJam
+udp://@224.200.202.60:1234
+#EXTINF:-1 tvg-name="Tiji TV" deinterlace=7 audio-track=0 , TiJi
+udp://@224.200.202.86:1234
+#EXTINF:-1 tvg-name="Nickelodeon" deinterlace=7 audio-track=0 , Nickelodeon
+udp://@224.200.202.40:1234
+#EXTINF:-1 tvg-name="Disney Channel" deinterlace=7 audio-track=0 , Disney Channel
+udp://@224.200.202.88:1234
+#EXTINF:-1 tvg-name="Детский_мир" tvg-logo="Детский Мир" deinterlace=7 audio-track=0 , Детский Мир (06:00-20:00)
+udp://@224.200.202.42:1234/
+#EXTINF:-1 tvg-name="Cartoon_Network" tvg-logo="Cartoon Network" deinterlace=7 audio-track=1 , Cartoon Network (06:00-23:00)
+udp://@224.200.202.25:1234/
+#EXTINF:-1 tvg-name="Канал_2x2" tvg-logo="2x2" deinterlace=1 audio-track=0 , 2x2
+udp://@224.200.202.171:1234
+#EXTINF:-1 tvg-name="Мультимания" tvg-logo="Мультимания" deinterlace=0 audio-track=0 , Мультимания
+udp://@224.200.202.119:1234
+#EXTINF:-1 tvg-name="Nickelodeon_HD" tvg-logo="Nickelodeon HD" deinterlace=0 group-title="Детям HD" group-collapse=1 audio-track=0 , Nickelodeon HD
+udp://@224.200.202.224:1234
+#EXTINF:-1 tvg-name="Fashion TV" deinterlace=7 group-title="Мода и Здоровье" group-collapse=1 audio-track=0 , Fashion TV
+udp://@224.200.202.10:1234
+#EXTINF:-1 tvg-name="TLC" deinterlace=7 audio-track=0 , TLC
+udp://@224.200.202.30:1234
+#EXTINF:-1 tvg-name="Кухня_ТВ" deinterlace=7 audio-track=0 , Кухня ТВ
+udp://@224.200.202.4:1234
+#EXTINF:-1 tvg-name="Телекафе" tvg-logo="Телекафе" deinterlace=7 audio-track=0 , Телекафе
+udp://@224.200.202.102:1234
+#EXTINF:-1 tvg-name="ТДК" deinterlace=7 audio-track=0 , ТДК
+udp://@224.200.202.8:1234
+#EXTINF:-1 tvg-name="Fashion One" tvg-logo="Fashion One" deinterlace=0 group-title="Мода и Здоровье HD" group-collapse=1 audio-track=0 , Fashion One
+udp://@224.200.202.208:1234
+#EXTINF:-1 tvg-name="ЕДА_HD" tvg-logo="Еда" deinterlace=0 audio-track=0 , Еда HD
+udp://@224.200.202.207:1234
+#EXTINF:-1 tvg-name="Музыка Первого" tvg-logo="Музыка Первого" deinterlace=0 group-title="Музыка и Развлечения" group-collapse=1 audio-track=0 , Музыка Первого
+udp://@224.200.202.97:1234
+#EXTINF:-1 tvg-name="Bridge_TV" tvg-logo="Bridge TV" deinterlace=7 audio-track=0 , Bridge TV
+udp://@224.200.202.82:1234
+#EXTINF:-1 tvg-name="MCM_Top" deinterlace=1 audio-track=0 , MCM Top
+udp://@224.200.202.106:1234
+#EXTINF:-1 tvg-name="MTV_Dance" deinterlace=1 audio-track=0 , MTV Dance
+udp://@224.200.202.47:1234
+#EXTINF:-1 tvg-name="MTV Hits" deinterlace=1 audio-track=0 , MTV Hits
+udp://@224.200.202.107:1234
+#EXTINF:-1 tvg-name="MTV ROCKS" tvg-logo="MTV Rocks" deinterlace=1 audio-track=0 , MTV Rocks
+udp://@224.200.202.98:1234
+#EXTINF:-1 tvg-name="RU_TV" deinterlace=7 audio-track=0 , RU.TV
+udp://@224.200.202.85:1234
+#EXTINF:-1 tvg-name="Rusong TV" tvg-logo="Rusong TV" deinterlace=7 audio-track=0 , Rusong TV
+udp://@224.200.202.105:1234
+#EXTINF:-1 tvg-name="VH1 Classic European" deinterlace=1 audio-track=0 , VH1 Classic
+udp://@224.200.202.12:1234
+#EXTINF:-1 tvg-name="Europa Plus TV" tvg-logo="Europa Plus TV" deinterlace=0 audio-track=0 , Европа Плюс ТВ
+udp://@224.200.202.110:1234
+#EXTINF:-1 tvg-name="Ля-Минор" deinterlace=7 audio-track=0 , Ля-Минор
+udp://@224.200.202.53:1234
+#EXTINF:-1 tvg-name="Mezzo" deinterlace=7 audio-track=0 , Mezzo
+udp://@224.200.202.18:1234
+#EXTINF:-1 tvg-name="Пятница!" tvg-logo="Пятница!" deinterlace=1 audio-track=0 , Пятница!
+udp://@224.200.202.3:1234
+#EXTINF:-1 tvg-name="Комеди_ТВ" deinterlace=7 audio-track=0 , Комеди ТВ
+udp://@224.200.202.83:1234
+#EXTINF:-1 tvg-logo="Dange TV" deinterlace=1 audio-track=0 , Dange TV
+udp://@224.200.202.14:1234
+#EXTINF:-1 tvg-name="MTV_Live_HD" tvg-logo="MTV Live HD" deinterlace=7 group-title="Музыка HD" group-collapse=1 audio-track=0 , MTV Live HD
+udp://@224.200.202.203:1234
+#EXTINF:-1 tvg-name="Mezzo_Live_HD" tvg-logo="Mezzo Live HD" deinterlace=7 audio-track=0 , Mezzo Live HD
+udp://@224.200.202.223:1234
+#EXTINF:-1 tvg-name="Первый_канал" deinterlace=7 group-title="Разное" group-collapse=1 audio-track=0 , Первый
+udp://@224.200.202.55:1234
+#EXTINF:-1 tvg-name="Россия_1" deinterlace=7 audio-track=0 , Россия 1
+udp://@224.200.202.175:1234
+#EXTINF:-1 tvg-name="Set" deinterlace=7 audio-track=0 , SET
+udp://@224.200.202.92:1234
+#EXTINF:-1 tvg-name="Домашний" tvg-logo="Домашний" deinterlace=7 audio-track=0 , Домашний
+udp://@224.200.202.180:1234
+#EXTINF:-1 tvg-name="Звезда" deinterlace=7 audio-track=0 , Звезда
+udp://@224.200.202.9:1234
+#EXTINF:-1 tvg-name="МИР" deinterlace=7 audio-track=0 , Мир
+udp://@224.200.202.73:1234
+#EXTINF:-1 tvg-name="Ностальгия" deinterlace=7 audio-track=0 , Ностальгия
+udp://@224.200.202.36:1234
+#EXTINF:-1 tvg-name="НТВ" deinterlace=7 audio-track=0 , НТВ
+udp://@224.200.202.1:1234
+#EXTINF:-1 tvg-logo="ОТР" deinterlace=1 audio-track=0 , ОТР
+udp://@224.200.202.84:1234
+#EXTINF:-1 tvg-name="Перец" tvg-logo="Перец" deinterlace=7 crop=716x560+2+8 audio-track=0 , Перец
+udp://@224.200.202.181:1234
+#EXTINF:-1 tvg-name="Пятый_Канал" deinterlace=7 audio-track=0 , Пятый Канал
+udp://@224.200.202.174:1234
+#EXTINF:-1 tvg-name="РЕН_ТВ" deinterlace=7 audio-track=0 , РЕН ТВ
+udp://@224.200.202.56:1234
+#EXTINF:-1 tvg-name="СТС" deinterlace=7 audio-track=0 , СТС
+udp://@224.200.202.6:1234
+#EXTINF:-1 tvg-name="ТВЦ" deinterlace=7 audio-track=0 , ТВ Центр
+udp://@224.200.202.72:1234
+#EXTINF:-1 tvg-name="ТВ-3" tvg-logo="ТВ3" deinterlace=7 audio-track=0 , ТВ3
+udp://@224.200.202.170:1234
+#EXTINF:-1 tvg-name="ТНТ" deinterlace=7 audio-track=0 , ТНТ
+udp://@224.200.202.2:1234
+#EXTINF:-1 tvg-name="100 ТВ" tvg-logo="100 ТВ" deinterlace=7 audio-track=0 , 100 ТВ
+udp://@224.200.202.173:1234
+#EXTINF:-1 tvg-name="Эгоист_ТВ" deinterlace=7 audio-track=0 , Эгоист ТВ
+udp://@224.200.202.94:1234
+#EXTINF:-1 tvg-name="CCTV-Русский" tvg-logo="CCTV4" deinterlace=7 crop=716x554+2+10 audio-track=0 , CCTV
+udp://@224.200.202.104:1234
+#EXTINF:-1 tvg-name="Первый_HD" tvg-logo="Первый HD" deinterlace=0 group-title="Разное HD" group-collapse=1 audio-track=0 , Первый HD
+udp://@224.200.202.242:1234
+#EXTINF:-1 tvg-name="Россия_HD" tvg-logo="Россия HD" deinterlace=0 audio-track=0 , Россия HD
+udp://@224.200.202.228:1234
+#EXTINF:-1 deinterlace=7 audio-track=0 , SET HD
+udp://@224.200.202.222:1234
+#EXTINF:-1 tvg-name="РБК" deinterlace=7 group-title="Новости и Информация" group-collapse=1 audio-track=0 , РБК
+udp://@224.200.202.27:1234
+#EXTINF:-1 tvg-name="Россия_24" deinterlace=7 audio-track=0 , Россия 24
+udp://@224.200.202.7:1234
+#EXTINF:-1 tvg-name="EuroNews" deinterlace=1 audio-track=0 , EuroNews
+udp://@224.200.202.11:1234
+#EXTINF:-1 tvg-name="Первый МЕТЕО" deinterlace=7 audio-track=0 , Первый Метео
+udp://@224.200.202.76:1234
+#EXTINF:-1 tvg-name="BBC_World" deinterlace=1 group-title="Новости (Иностр.)" group-collapse=1 audio-track=0 , BBC World News
+udp://@224.200.202.41:1234
+#EXTINF:-1 tvg-name="Bloomberg" deinterlace=7 audio-track=0 , Bloomberg
+udp://@224.200.202.38:1234
+#EXTINF:-1 tvg-name="CNN_International" deinterlace=7 audio-track=0 , CNN International
+udp://@224.200.202.43:1234
+#EXTINF:-1 tvg-name="France_24" tvg-logo="France 24" deinterlace=7 audio-track=0 , France 24 English
+udp://@224.200.202.26:1234
+#EXTINF:-1 tvg-name="Russia Today" tvg-logo="Russia Today" deinterlace=1 audio-track=0 , Russia Today English
+udp://@224.200.202.29:1234
+#EXTINF:-1 tvg-name="Союз" tvg-logo="Союз" deinterlace=7 group-title="Религия" group-collapse=1 audio-track=0 , Союз
+udp://@224.200.202.126:1234
+#EXTINF:-1 deinterlace= group-title="Телемагазины" group-collapse=1 audio-track=0 , Shopping Live
+udp://@224.200.202.124:1234
+#EXTINF:-1 tvg-name="CBS Drama" tvg-logo="CBS Drama" deinterlace=7 group-title="Тест" group-collapse=1 audio-track=0 , CBS Drama
+udp://@224.200.202.19:1234
+#EXTINF:-1 tvg-name="Русский_Иллюзион" tvg-logo="Русский Иллюзион" deinterlace=0 audio-track=0 , Русский Иллюзион
+udp://@224.200.202.122:1234
+#EXTINF:-1 tvg-name="Ю-ТВ" tvg-logo="Ю" deinterlace=0 audio-track=0 , Ю
+udp://@224.200.202.35:1234
+#EXTINF:-1 deinterlace=0 audio-track=0 , RTG TV HD
+udp://@224.200.202.222:1234
+#EXTINF:-1 tvg-logo="Теледом HD" deinterlace=0 audio-track=0 , Теледом HD
+udp://@224.200.202.230:1234
