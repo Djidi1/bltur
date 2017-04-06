@@ -9,6 +9,7 @@ class database {
 	protected $mySQL;
 
 	protected $sql;
+	protected $error;
 	protected $result;
 	/**
 	 * Выбранная База Данных
@@ -17,7 +18,7 @@ class database {
 	protected $dbSelected;
 
 	public function __construct($modName = '') {
-		global $LOG,$System, $User;
+//		global $LOG,$System, $User;
 		
 		if (!defined('DB_USE')) stop('Отсутствует параметр [DB_USE]');
 		$this->dbSelected = DB_USE;
@@ -29,7 +30,8 @@ class database {
 	}
 
 	public function query() {
-
+		$args = array();
+		$result = false;
 		if (func_num_args() > 1) $args = func_get_args();
 		if (func_num_args() == 1) $args = func_get_arg(0);
 		if (func_num_args() == 0) return false;
@@ -39,6 +41,7 @@ class database {
 				$result = $this->mySQL->query($args);
 				$this->sql = $this->mySQL->sql;
 				$this->result = $this->mySQL->result;
+				$this->error = $this->mySQL->error;
 				break;
 			case 'MSSQL':
 				$result = $this->MSSQL->query($args);
@@ -120,18 +123,20 @@ class database {
 			case 'mySQL': return $this->mySQL->numRows(); break;
 			case 'MSSQL': return $this->MSSQL->numRows(); break;
 		}
+        return false;
 	}
 	public function affectedRows() {
 		switch($this->dbSelected) {
 			case 'mySQL': return $this->mySQL->affectedRows(); break;
 			case 'MSSQL': return $this->MSSQL->affectedRows(); break;
 		}
+        return false;
 	}
 	public function insertID() {
 		switch($this->dbSelected) {
 			case 'mySQL': return $this->mySQL->insertID(); break;
 			case 'MSSQL': return $this->MSSQL->insertID(); break;
 		}
+        return false;
 	}
 }
-?>

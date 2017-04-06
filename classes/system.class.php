@@ -302,7 +302,7 @@ class DDList {
 }
 
 
-/**
+/*
  *
  * @param $date строка с датой по маске (DD.MM.YY[YY] HH.MM.SS)
  * @return Возвращает временную метку - timestamp
@@ -361,7 +361,7 @@ function dateMyToTimestamp($date) {
 
 /**
  * Превращает строку с датой в тип MySQL DATETIME
- * @param $date Строка с датой (по маске d.m.Y h:i:s)
+ * @param $date string с датой (по маске d.m.Y h:i:s)
  * @return MYSQL DATETIME format
  */
 function dateToDATETIME ($date, $addDay = 0) {

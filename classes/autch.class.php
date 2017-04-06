@@ -4,7 +4,7 @@ session_start();
 
 $loginErrors = array(
     0 => 'Введите имя пользователя и пароль',
-    1 => 'Вы вошли как: %s',
+    1 => ' %s',
     -1 => '',
     -2 => 'Имя пользователя или пароль не верны',
     -3 => 'Сессия устарела',
@@ -17,7 +17,7 @@ $loginErrors = array(
 class TUser extends database {
   
   private $user_name;
-  private $user_login;
+//  private $user_login;
   private $user_id;
   private $user_right;   /* array ! */
   /**
@@ -36,6 +36,7 @@ class TUser extends database {
   protected $phone;
 
   protected $login_error;
+  protected $authorization;
 
   protected $userData;
   public  $nView;
@@ -52,7 +53,7 @@ class TUser extends database {
     $this->userData = array('group_name'=>'');
     $this->nView = new userView();
 
-    $mod = 'modset';
+//    $mod = 'modset';
     parent::__construct();
   }
 
@@ -103,13 +104,16 @@ class TUser extends database {
     return $right;
   }
 
-  
-  /**
-   * проверка логина и пароля (если имеются) и текущей сессии
-   */
+
+    /**
+     * проверка логина и пароля (если имеются) и текущей сессии
+     * @param $username
+     * @param $password
+     * @return bool
+     */
   public function authentication ($username, $password) {
     if ($username == '' || $password == '') return false;
-    $sql = 'SELECT * FROM '.TAB_PREF.'users WHERE login = \'%1$s\' AND pass = \'%2$s\' AND isban = 0';
+    $sql = 'SELECT * FROM users WHERE login = \'%1$s\' AND pass = \'%2$s\' AND isban = 0';
     $this->query($sql, $username, md5($password));
 //    stop($this->numRows());
 $row = $this->fetchOneRowA();
@@ -119,7 +123,7 @@ $row = $this->fetchOneRowA();
       $this->user_name = $row['name'];
 	  
 	  $sql2 = '
-      INSERT INTO ' . TAB_PREF . 'logins
+      INSERT INTO logins
            (id_user,ip,referer,browser,screen_size,os)
      VALUES
            (\'' . $row ["id"] . '\', \'' . $_SERVER ["REMOTE_ADDR"] . '\', 
@@ -137,19 +141,20 @@ $row = $this->fetchOneRowA();
   Получени параметров меню, есть ли установка NEW
   */
   public function get_menu_new($id){
-		$sql = "SELECT access FROM ".TAB_PREF."pages WHERE id ='$id'";
+		$sql = "SELECT access FROM pages WHERE id ='$id'";
 		$this->query($sql);
 		$row = $this->fetchOneRowA();
 		return $row['access'];
 	}
-  
-  /**
-   * Получение данных о пользователе и установка прав
-   */
+
+    /**
+     * Получение данных о пользователе и установка прав
+     * @param $user_id
+     */
   public function get_user_data ($user_id) {
   	if ($user_id > 0) {
-  		$sql = 'SELECT u.*, g.id as gid, g.name as gname FROM '.TAB_PREF.'users u
-            LEFT JOIN ('.TAB_PREF.'groups_user ug INNER JOIN '.TAB_PREF.'groups g ON ug.group_id = g.id) ON u.id = ug.user_id
+  		$sql = 'SELECT u.*, g.id as gid, g.name as gname FROM users u
+            LEFT JOIN (groups_user ug INNER JOIN groups g ON ug.group_id = g.id) ON u.id = ug.user_id
             WHERE u.id = \'%1$u\'';
 	    $this->query($sql, $user_id);
 	    $this->userData = $this->fetchRowA();
@@ -163,59 +168,27 @@ $row = $this->fetchOneRowA();
 	    IF(tn.owner IS NOT NULL, tn.owner, 0)  ,
 	    IF(g.name IS NOT NULL, g.name, \'\') , 
 	    IF(ma.id IS NOT NULL, ma.id, ma2.id) as maid
-		FROM '.TAB_PREF.'tree_nodes tn
-		INNER join '.TAB_PREF.'groups_user gu on (tn.child = gu.group_id or tn.owner = gu.group_id) and gu.user_id = %1$u
-		INNER join '.TAB_PREF.'module_access mc on (tn.child = mc.group_id or tn.owner = mc.group_id)
-		INNER join '.TAB_PREF.'groups g on mc.group_id = g.id
-		INNER join '.TAB_PREF.'module_actions ma on mc.action_id = ma.id
-		INNER join '.TAB_PREF.'modules m on ma.mod_id = m.id
+		FROM tree_nodes tn
+		INNER join groups_user gu on (tn.child = gu.group_id or tn.owner = gu.group_id) and gu.user_id = \'%1$u\'
+		INNER join module_access mc on (tn.child = mc.group_id or tn.owner = mc.group_id)
+		INNER join groups g on mc.group_id = g.id
+		INNER join module_actions ma on mc.action_id = ma.id
+		INNER join modules m on ma.mod_id = m.id
 
-		left join '.TAB_PREF.'module_actions ma2 ON (ma2.access = 2 and %1$u > 0) or (ma2.access = 1)
-		left JOIN '.TAB_PREF.'modules m2 ON ma2.mod_id = m2.id
+		left join module_actions ma2 ON (ma2.access = 2 and \'%1$u\' > 0) or (ma2.access = 1)
+		left JOIN modules m2 ON ma2.mod_id = m2.id
 		
 		GROUP BY maid';
-	    
-	    if (DB_USE == 'MSSQL') {
-	    	$sql = 'SELECT distinct
-	    ma.action_name, 
-	    ma.access as access,
-	    mc.access as mcaccess , 
-	    m.codename as mcodename, 
-	    gu.group_id, 
-	    tn.owner,
-	    g.name, 
-	    ma.id
-	    
-	FROM '.TAB_PREF.'tree_nodes tn (nolock)
-	INNER join '.TAB_PREF.'groups_user gu (nolock) on (tn.child = gu.group_id or tn.owner = gu.group_id) and gu.user_id = %1$u
-	INNER join '.TAB_PREF.'module_access mc (nolock) on (tn.child = mc.group_id or tn.owner = mc.group_id)
-	INNER join '.TAB_PREF.'groups g (nolock) on mc.group_id = g.id
-	INNER join '.TAB_PREF.'module_actions ma (nolock) on mc.action_id = ma.id
-	INNER join '.TAB_PREF.'modules m( nolock)  on  ma.mod_id = m.id
-	union all
-	select 
-	ma2.action_name, 
-	ma2.[access], 
-	ma2.[access], 
-	m2.codename, 
-	0,
-	0,
-	\'\', 
-	ma2.id
-	from '.TAB_PREF.'module_actions ma2 (nolock)  
-	INNER JOIN '.TAB_PREF.'modules m2 (nolock) ON ma2.mod_id = m2.id
-	where (ma2.access = 2 and %1$u > 0) or (ma2.access = 1)';
-	    }
+
 	    
 	    $user_group = $this->userData['gid'];
 	    $this->query($sql, $user_id,$user_group);
 
 	    while (($row = $this->fetchRowA())!==false) {
 	    	$a = false;
-	    	
 	    	if (($row['access'] == 1) || ($row['access'] == 2 && $user_id > 0)) $a = true;
 	    	elseif ($row['mcaccess'] == 1) $a = true;
-	     	$this->Log->addToLog('Установка разрешения '.$row['mcodename'].'.'.$row['action_name'].' установка в '.(($a) ? 'Разрешено' : 'Запрещено'), __LINE__, __METHOD__);
+	     	$this->Log->addToLog('Установка разрешения Auth '.$row['mcodename'].'.'.$row['action_name'].' установка в '.(($a) ? 'Разрешено' : 'Запрещено'), __LINE__, __METHOD__);
 	    	$this->user_right[$row['mcodename']][$row['action_name']] = $a;
 	    }   
 	    //stop($this->user_right);
@@ -223,10 +196,10 @@ $row = $this->fetchOneRowA();
   		# ACTION_PUBLIC
   		$this->user_right = array();
   		$sql = 'SELECT ma.*, m.name as mname, m.codename as mcodename, mc.access as mcaccess, mc.group_id
-	            FROM '.TAB_PREF.'module_actions ma
-	            LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id
-	            INNER JOIN '.TAB_PREF.'modules m ON ma.mod_id = m.id
-	            WHERE ma.access = %2$u';
+	            FROM module_actions ma
+	            LEFT JOIN module_access mc ON ma.id = mc.action_id
+	            INNER JOIN modules m ON ma.mod_id = m.id
+	            WHERE ma.access = \'%2$u\' ';
 
   		$this->query($sql, $user_id, ACTION_PUBLIC);
 
@@ -246,54 +219,13 @@ $row = $this->fetchOneRowA();
   	$this->Log->addToLog(array('Права авторизированнго пользователя LDAP', 'group_name' =>$group_name, 'login'=>(($group_name) ? 'TRUE' : 'FALSE')), __LINE__,__METHOD__);
   	
 	/* Права авторизированнго пользователя */
-  	if ($group_name != '' && DB_USE == 'MSSQL') {
-  		$sql = 'SELECT distinct
-	    ma.action_name, 
-	    ma.access as access,
-	    mc.access as mcaccess , 
-	    m.codename as mcodename, 
-	--    gu.group_id, 
-	    tn.owner,
-	    g.name, 
-	    ma.id
-	    
-		FROM '.TAB_PREF.'tree_nodes tn (nolock)
-		-- INNER join '.TAB_PREF.'groups_user gu (nolock) on tn.child = gu.group_id or tn.owner = gu.group_id
-		LEFT join '.TAB_PREF.'module_access mc (nolock) on (tn.child = mc.group_id or tn.owner = mc.group_id)
-		LEFT join '.TAB_PREF.'groups g (nolock) on mc.group_id = g.id and g.name = \'%1$s\'
-		LEFT join '.TAB_PREF.'module_actions ma (nolock) on mc.action_id = ma.id
-		LEFT join '.TAB_PREF.'modules m( nolock)  on  ma.mod_id = m.id
-		union all
-		select 
-		ma2.action_name, 
-		ma2.[access], 
-		ma2.[access], 
-		m2.codename, 
-	--	0,
-		0,
-		\'\', 
-		ma2.id
-		from '.TAB_PREF.'module_actions ma2 (nolock)
-		INNER JOIN '.TAB_PREF.'modules m2 (nolock) ON ma2.mod_id = m2.id
-		where (ma2.access = 2 and \'%1$s\' <> \'\') or (ma2.access = 1)';
-  	
-  	
-  	$this->query($sql,$group_name, ACTION_PUBLIC);
-  	while (($row = $this->fetchRowA())!==false) {
-  		$a = false;
-  		if ($row['access'] == 1 ) $a = true;
-  		elseif ($row['mcaccess'] == 1) $a = true;
-  		$this->user_right[$row['mcodename']][$row['action_name']] = $a;
-  		$this->Log->addToLog('Установка разрешения (LDAP) '.$row['mcodename'].'.'.$row['action_name'].' установка в '.(($a) ? 'Разрешено' : 'Запрещено'), __LINE__, __METHOD__);
-  	}
-  	} else {
   		$this->get_user_data(0);
-  	}
   }
-  
-  /**
-   * выход (вывод) из системы, как самростоятельно так и по окончании сессии
-   */     
+
+    /**
+     * выход (вывод) из системы, как самростоятельно так и по окончании сессии
+     * @param bool $redirect
+     */
   public function logout($redirect = false) {
      if ($redirect) session_start(); 
     session_unset();
@@ -356,120 +288,12 @@ $row = $this->fetchOneRowA();
     }
   }
   
-  /* Вход по LDAP */
-  protected function login_LDAP() {
-  	$this->Log->addToLog('Авторизация по LDAP', __LINE__,__METHOD__);
-  	$this->user_id = 0;  
-  /**
-   * 0 - нет ошибок, вход не выполнен
-   * 1 - вошли удачно
-   * -2 - логин или пароль не верены
-   * -3 - сессия устарела
-   */
-    if ($this->Vals->isVal('logout','GET')) $this->logout(true);
-    $login = false;
-    
-    
-    /**
-     * Проверка и Вход по логину и паролю - аутентификация
-     */
-    $LDAPAuth = new LDAP_AUTH();
-    if ($this->Vals->isVal('username', 'POST') && $this->Vals->isVal('userpass', 'POST') && $this->Vals->isVal('domain', 'POST')) {
-    	
-    	$login = $LDAPAuth->authLDAP($this->Vals->getVal('username', 'POST', 'string'),$this->Vals->getVal('userpass', 'POST', 'string'),$this->Vals->getVal('domain', 'POST', 'string'));
-    	$this->Log->addToLog(array('Проверка имени и пароля LDAP', 'login'=>(($login) ? 'TRUE' : 'FALSE')), __LINE__,__METHOD__);
-      if (!$login || $LDAPAuth->error != 0) {
-      	$this->login_error = -2; 
-      	$this->userData['group_name'] = '';
-      	$this->userData['gname'] = '';
-      	$this->userData['name'] = 'Гость';
-      	$_SESSION['ldap_group_name'] = '';
-      	$_SESSION['ldap_user_name'] = '';
-      }              
-      else {
-      	$LDAPuserData = $LDAPAuth->getLDAPUserData();
-      	$this->user_id = $LDAPAuth->getUserId();   
-//      	stop($LDAPAuth->getUserName());   	
-      	$this->name = $LDAPAuth->getUserName();      	
-      	$this->userData['group_name'] = $LDAPAuth->getGroupName();      	
-      	$this->userData['gname'] = $LDAPAuth->getGroupName();      	
-      	$this->userData['name'] = $this->name;
-      	$_SESSION['ldap_group_name'] = $this->userData['group_name'];
-      	$_SESSION['ldap_user_name'] = $this->name;      	
-      }    
-      
-      $this->Log->addToLog(array('Проверка имени и пароля LDAP', 'login'=>(($login) ? 'TRUE' : 'FALSE')), __LINE__,__METHOD__);
-    }
-    
-    /**
-     * Старт сессии и проверка существующей на жизнь
-     */
-    if (isset($_SESSION['authorization'])) {
-      if (session_id() == $_SESSION['authorization_ses'] && $_SESSION['authorization_user'] != 0 && $_SESSION['authorization_LDAP'] == 1) {      	
-      	$login = true;
-        $this->login_error = 1;
-        $this->user_id = $_SESSION['authorization_user'];
-        $this->name = $_SESSION['ldap_user_name'];   
-        //stop($this->name);   	
-      	$this->userData['group_name'] = $_SESSION['ldap_group_name'];      	
-      	$this->userData['gname'] = $_SESSION['ldap_group_name'];      	
-      	$this->userData['name'] = $_SESSION['ldap_user_name'];
-        
-      } else { $login = false; $this->login_error = -3; }
-      
-      $this->Log->addToLog(array('Проверка Существующей сессии LDAP', 'login'=>(($login) ? 'TRUE' : 'FALSE'), session_id() ,$_SESSION['authorization_ses'],$_SESSION['authorization_user'], $_SESSION['authorization_LDAP']), __LINE__,__METHOD__);
-      
-    }
 
-    $this->get_user_data_LDAP($this->userData['group_name']);
-    
-    /**
-     * При удачной аутентификации, авторизируем
-     */
-    if ($login) {      
-      $_SESSION['authorization'] = 1;
-      $_SESSION['authorization_LDAP'] = 1;
-      $_SESSION['authorization_user'] = $this->user_id;
-      $_SESSION['authorization_ses'] = session_id();
-      $this->authorization = true;
-      $this->login_error = 1;
-      $this->Log->addToLog('Пользователь авторизован',__LINE__, __METHOD__);
-      $this->Log->addToLog($this->user_right, __LINE__, __METHOD__);
-      return true;
-    } else {
-      $this->login_error = 0;
-      $this->Log->addToLog(array('Пользователь не авторизован (Гость)', $this->user_id),__LINE__, __METHOD__);
-      
-      $this->logout();
-      $this->Log->addToLog($this->user_right, __LINE__, __METHOD__);
-      return false;
-    }
-  }
-  
-  
   /**
    * вход в систему, проверка сессии
    */
   public function login() {
-  	if ($this->Vals->isVal('domain','POST')) {
-  		$domain = $this->Vals->getVal('domain','POST','string');
-  		if ($domain != '' && $domain != 'local') {  			
-  			return $this->login_LDAP();
-  		}
-  		else {  			
-  			return $this->login_DB();
-  		}
-  	} elseif (isset($_SESSION['authorization_LDAP'])) {
-  		if ($_SESSION['authorization_LDAP'] == 1) {
-  			return $this->login_LDAP(); 
-  		} else {
-  			return $this->login_DB();
-  		}
-  	} else {
-  		return $this->login_DB();
-  	}
-  	
-  	return false;
+	  return $this->login_DB();
   }
 
 
@@ -490,7 +314,7 @@ class userView extends module_view {
 	}
 	/**
 	 * Форма регистрации	 
-	 * @return unknown_type
+	 * @return boolean
 	 */
 	public function getModName() {
 		return $this->modName;
@@ -500,21 +324,23 @@ class userView extends module_view {
 	}
 	/**
 	 * Стандартная информация о пользователе
-	 * @param $userData Массив данных из TUser->userData
-	 * @return unknown_type
+	 * @param $userData -- Массив данных из TUser->userData
+	 * @return boolean
 	 */
 	public function viewUserInfo($userData) {
-		if(!is_array($userData)) return false;
-		
+        return is_array($userData);
 	}
-	/**
-	 * Продвинутый блок логина и пароля, включает в себя дополнительные параметры
-	 * @param $message
-	 * @param $user_id
-	 * @param $Params - параметры отображения окна логин/статус
-	 * @param $StatusBar - данные для окна статуса
-	 * @return unknown_type
-	 */
+
+    /**
+     * Продвинутый блок логина и пароля, включает в себя дополнительные параметры
+     * @param $title
+     * @param $message
+     * @param $user_id
+     * @param $Params - параметры отображения окна логин/статус
+     * @param $StatusBar - данные для окна статуса
+     * @param int $rightsModAdmin
+     * @return bool
+     */
 	public function viewLoginParams ($title, $message, $user_id, $Params, $StatusBar, $rightsModAdmin=0) {
 		global $_SESSION, $User, $loginErrors;
 		/*
@@ -528,7 +354,7 @@ class userView extends module_view {
 		$sysMod = new modsetItem(array());
 		$sysMod->name = 'login';
 		$sysMod->defModName = 'login';
-		$View = new module_view('login', $sysMod);
+//		$View = new module_view('login', $sysMod);
 		if (gettype($message) != 'array') $message = array(0 => $message);
 		if (gettype($title) != 'array') $title = array(0 => $title);
 		$Container = $this->newContainer('login');
@@ -538,6 +364,7 @@ class userView extends module_view {
 		$this->addToNode($Container, 'login', intval($User->lastError()));
 		$this->addToNode($Container, 'referer', SITE_ROOT.$_SERVER["REQUEST_URI"]);
 		$this->addToNode($Container, 'user_id', $user_id);
+		$this->addToNode($Container, 'group_id', $User->getUserGroup());
 		$this->addToNode($Container, 'rightsModAdmin', $rightsModAdmin);
 		$this->addToNode($Container, 'subject', $message[0]);
 		$this->addToNode($Container, 'title', $title[0]);
@@ -553,9 +380,9 @@ class userView extends module_view {
 		}
 		$StatusBarBlock = $this->addToNode($Container, 'statusbar','');
 		foreach ($StatusBar as $key => $val) {
-			$this->arrToXML($val,$ParamsBlock,'item');
+			$this->arrToXML($val,$StatusBarBlock,'item');
 
 		}
+		return true;
 	}
 }
-?>

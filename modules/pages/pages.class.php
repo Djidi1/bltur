@@ -20,7 +20,7 @@ class pageItem extends module_item {
 	public $page_title;
 
 	public function __construct ($Params) {
-		global $LOG;
+//		global $LOG;
 		parent::__construct();
 		if (isset($Params['id'])) $this->id = $Params['id']; else $this->id = 0;
 		if (isset($Params['name'])) $this->name = $Params['name']; else $this->name = 0;
@@ -100,13 +100,13 @@ class pageModel extends module_model {
 	}
 
 	public function getPageID($pageName) {
-		$sql = 'SELECT id FROM '.TAB_PREF.'pages WHERE name = \'%1$s\'';
+		$sql = 'SELECT id FROM pages WHERE name = \'%1$s\'';
 		$this->query($sql, $pageName);
 		$id = $this->getOne();
 		return $id;
 	}
 	public function getInfoPages() {
-		$sql = 'SELECT * FROM '.TAB_PREF.'pages WHERE module=13 ORDER BY title';
+		$sql = 'SELECT * FROM pages WHERE module=13 ORDER BY title';
 		$this->query($sql);
 	
 		$collection = Array();
@@ -117,7 +117,7 @@ class pageModel extends module_model {
 	}
 
 	public function getAllPages() {
-		$sql = 'SELECT id, module, access, title FROM '.TAB_PREF.'pages ORDER BY module,title';
+		$sql = 'SELECT id, module, access, title FROM pages ORDER BY module,title';
 		$this->query($sql);
 		
 		$collection = Array();
@@ -128,7 +128,7 @@ class pageModel extends module_model {
 	}
 
 	public function get($id) {
-		$sql = 'SELECT * FROM '.TAB_PREF.'pages WHERE id = %1$u AND (module=%2$u OR `parent_module` = 0)';
+		$sql = 'SELECT * FROM pages WHERE id = %1$u AND (module=%2$u OR `parent_module` = 0)';
 		$this->query($sql, $id,$this->mod_id);
 		$row = $this->fetchOneRowA();
 		$page = new pageItem($row);
@@ -136,25 +136,25 @@ class pageModel extends module_model {
 	}
 
 	public function del($id) {
-		$sql = 'DELETE FROM '.TAB_PREF.'pages WHERE id = %1$u';
+		$sql = 'DELETE FROM pages WHERE id = %1$u';
 		$query = $this->query($sql, $id);
 		return $query;
 	}
 	public function copy($id) {
-		$sql = 'insert into '.TAB_PREF.'pages (name,module,parent_module,title,content,access,date,date_change,description,keywords,page_title,user_id)
+		$sql = 'insert into pages (name,module,parent_module,title,content,access,date,date_change,description,keywords,page_title,user_id)
 				select CONCAT(name,\'_\',id),module,parent_module,CONCAT(title,\' copy\'),content,access,date,date_change,description,keywords,page_title,user_id
-				FROM '.TAB_PREF.'pages where id = %1$u';
+				FROM pages where id = %1$u';
 		$query = $this->query($sql, $id);
 		return $query;
 	}
-
+/*
 	public function sendSupport ($fio, $email, $message) {
 		$sql = 'INSERT INTO messages (dateadd, ipadress, uname, umail, letter) VALUES (NOW(), \'%1$s\',\'%2$s\',\'%3$s\',\'%4$s\')';
 		$ip = $_SERVER["REMOTE_ADDR"];
 		$sr = $this->query($sql,$ip, $fio,$email,$message);
 		//stop($this->sql);
 		if (!$sr) return false;
-		$date = date('d.m.Y');
+//		$date = date('d.m.Y');
 		$to = 'support@rivc-pulkovo.ru';
 		$title='title';
 		// To send HTML mail, the Content-type header must be set
@@ -171,6 +171,7 @@ class pageModel extends module_model {
 		$res = ($sr & $ok);
 		return $res;
 	}
+*/
 }
 
 
@@ -230,18 +231,15 @@ class pageProcess extends module_process {
 
 		if ($user_right == 0 && $user_id > 0) {
 			$p = array('У Вас нет прав для использования модуля', '$this->modName'=>$this->modName, 'action'=>$action, 'user_id'=>$user_right, 'user_right'=>$user_right);
-			$this->nView->viewError('У Вас нет прав на это действие', 'Предупреждение');
+			$this->nView->viewMessage('У Вас нет прав на использования данного модуля.', '');
 			$this->Log->addError($p, __LINE__, __METHOD__);
 			$this->updated = true;
 			return;
 		}
+
+        $this->User->nView->viewLoginParams('Цветочное такси','',$user_id, array(),array(), $this->User->getRight('admin','view'));
+
 /*
-		if ($user_right == 0 && $user_id == 0 && !$_action) {
-			$this->nView->viewLogin('Балтиклайнс Тур','',$user_id, array(),array());
-			$this->updated = true;
-			return;
-		}
-			
 		if ($user_id > 0 && !$_action) {
 			$this->User->nView->viewLoginParams('Балтиклайнс Тур','',$user_id, array(),array(), $this->User->getRight('admin','view'));
 		}
@@ -273,7 +271,7 @@ class pageProcess extends module_process {
 			$Params['description'] = $this->vals->getVal('description', 'POST', 'string');
 			$Params['keywords'] = $this->vals->getVal('keywords', 'POST', 'string');
 			$Params['page_title'] = $this->vals->getVal('page_title', 'POST', 'string');
-			$page = new pageItem($Params);
+//			$page = new pageItem($Params);
 
 			if ($user_id > 0) {
 			//	if ($this->isValid($Params)) {
@@ -336,10 +334,10 @@ class pageProcess extends module_process {
 		
 		if ($action == 'copy') {
 			/* копировать */
-		//	$page_id = $this->vals->getVal('copy', 'GET');
-		//	$res = $this->nModel->copy($page_id);
-		//	if ($res !== false) $this->nView->viewMessage('Страница скопирована', 'Сообщение');
-		//	if ($res === false) $this->nView->viewMessage('Ошибка копирования страницы', 'Сообщение');
+			$page_id = $this->vals->getVal('copy', 'GET');
+			$res = $this->nModel->copy($page_id);
+			if ($res !== false) $this->nView->viewMessage('Страница скопирована', 'Сообщение');
+			if ($res === false) $this->nView->viewMessage('Ошибка копирования страницы', 'Сообщение');
 			$action = 'line';
 		}
 
@@ -355,7 +353,7 @@ class pageProcess extends module_process {
 			} else {
 				$p = 'У Вас нет прав для редактирования ';//.
 				$this->nView->viewError($p);
-				$p.= $page->id;
+				$p .= $page_id;
 				$this->Log->addError(array('msg'=>$p, 'user_id'=>$user_id, 'page_id'=>$page_id), __LINE__, __METHOD__);
 				$this->updated = true;
 			}
@@ -379,9 +377,9 @@ class pageProcess extends module_process {
 			$page_id = $this->vals->getVal('view', 'GET');
 			if ($this->vals->isNaN($page_id)) $page_id = $this->nModel->getPageID($page_id);
 			#$page_id = $this->nModel->getPageID('index');
-			
+			/*
 			if ($page_id == 30)
-				$this->nView->viewLogin('Вход для Агентов','',$user_id, array(),array());
+				$this->nView->viewLogin('Вход для Магазинов','',$user_id);
 				
 			if ($user_id > 0 and $page_id == 30 ) {
 				$this->nView->viewMessage('Вам доступен раздел для Агентов. <br/>
@@ -389,14 +387,14 @@ class pageProcess extends module_process {
 					<li><a href="/tc/agent-1/"><b>Список ваших бронирований.</b></a></li>
 					<li><a href="/turs/viewTur-1/"><b>Сделать новое бронирование.</b></a></li>
 				</ul><br />
-				Все бронирования должны осуществлять после авторизации в разделе "Агентам"','');
+				Все бронирования должны осуществлять после авторизации в разделе "Клиентам"','');
 			}
-
+*/
 			$page = $this->nModel->get($page_id);
 			if ($page->id > 0) {
 				$this->nView->viewPage($page);
 			} else {
-				$error = '';
+//				$error = '';
 				#$this->Log->addError('Страница не найдена', $page_id, 'index',__LINE__, __METHOD__);
 				$this->nView->viewError(array('Страница не найдена'));
 			}
@@ -410,7 +408,7 @@ class pageProcess extends module_process {
 				$page = $this->nModel->get($page_id);
 				$this->nView->viewIndexPage($page);
 			} else {
-				$error = '';
+//				$error = '';
 				#$this->Log->addError('Страница не найдена', $page_id, 'index',__LINE__, __METHOD__);
 				$this->nView->viewError(array('Страница не найдена', 'index', intval($page_id)));
 			}
@@ -497,14 +495,14 @@ class pageView extends module_view {
 		$form = new CFormGenerator('pages', SITE_ROOT.$this->modName.'/update-'.$page->id.'/', 'POST', 0);
 		$form->addHidden('update', $page->id, 'update');
 		$form->addHidden('user_id', $user_id, 'user_id');
-		$form->addBox('access', '1','Пометить NEW', '1', $page->access);
+//		$form->addBox('access', '1','Пометить NEW', '1', $page->access, '', '', '');
 		$form->addHidden('name', $page->name,'name');
 		$form->addText('title', $page->title,'Название страницы RUS', 'title', '', 30);
 	//	$form->addLabledMessage('name2', 'Название страницы ENG', $page->name, 'name2');
 
 		//$form->addText('module', $page->module,'Модуль', 'module', '', 30);
 		$modules = $System->getModules();
-		$modID = $System->getModule(0,$this->modName);
+//		$modID = $System->getModule(0,$this->modName);
 		//stop($page->module,0);
 		$form->addSelect('module', $page->module , 'Модуль', $page->module, $page->module, 'module', '', 1);
 		foreach ($modules as $option) {
@@ -535,7 +533,7 @@ class pageView extends module_view {
 		$Container = $this->newContainer($this->modName);
 		$itemConteiner = $this->addToNode($Container, 'items','');
 		foreach ($collect as $item) {
-			$pageElement = $this->arrToXML($item, $itemConteiner, 'item');
+			$this->arrToXML($item, $itemConteiner, 'item');
 			//$this->addAttr('name', $item['name'], $pageElement);
 		}
 		return true;
@@ -568,5 +566,3 @@ class pageView extends module_view {
 	}
 
 }
-
-?>

@@ -2,96 +2,27 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'turlist']">
         <xsl:if test="//page/@isAjax != 1">
-            <xsl:if test="count(news/item) > 0">
-                <div class="row">
-                    <div class="camera_wrap">
-                        <div data-src="images/image_1.jpg"/>
-                        <div data-src="images/image_2.jpg"/>
-                        <div data-src="images/image_3.jpg"/>
-                        <div data-src="images/image_4.jpg"/>
-                    </div>
-                </div>
-            </xsl:if>
             <div class="row">
-                <xsl:if test="count(news/item) > 0">
-                    <div class="col-md-3">
-                        <!-- НОВОСТИ -->
-                        <div class="comment-list">
-                            <xsl:call-template name="newsListIndex"/>
-                        </div>
-                        <!-- КОНЕЦ НОВОСТЕЙ -->
-                        <!--
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">ДОБРО ПОЖАЛОВАТЬ НА САЙТ "Балтик Лайнс Тур"!</h3>
-                            </div>
-                            <div id="viewListlang" class="panel-body">
-                                <p>Очень надеемся, что этот сайт сделает более легким и удобным наше общение.
-                                    <br/>
-                                    <strong>На сайте можно:</strong>
-                                </p>
-
-                                <ul>
-                                    <li>Быстро и легко найти тур: по району, по цели, по цене</li>
-                                    <li>сделать заказ ON-LINE
-                                        <br/>
-                                        (если Вы уже были нашим клиентом в заявке необходимо заполнить
-                                        <strong>всего один</strong>
-                                        пункт)
-                                    </li>
-                                    <li>Увидеть сколько мест осталось в продаже</li>
-                                    <li>Получить информацию по выезду просто наведя курсор на нужный тур</li>
-                                    <li>По номеру заказа внести изменения и дополнения в свою заявку</li>
-                                    <li>Посмотреть на карте места остановок автобуса</li>
-                                    <li>Получить информацию важную и просто интересную</li>
-                                    <li>Купить "горящую путевку" с хорошей скидкой</li>
-                                    <li>Подобрать экскурсионную поездку или игру-квест для школьной группы</li>
-                                    <li>Подписаться на рассылку, заказать обратный звонок и многое другое</li>
-                                </ul>
-
-                                <p>Нажмите "
-                                    <a href="/turs/viewTur-1/">
-                                        <strong>
-                                            <span style="color:#000080">Подбор тура</span>
-                                        </strong>
-                                    </a>
-                                    " - и сделайте правильный выбор!
-                                </p>
-
-
-                                <p>2-3 дневные и праздничные туры отображаются в графике района.</p>
-
-                                <p>Будем искренне признательны, если Вы подскажете, где наши ошибки и посоветуете, как
-                                    сделать сайт более удобным, доступным и интересным!
-                                </p>
-
-                                <iframe width="100%" height="85" frameborder="0">
-                                    <xsl:attribute name="src">
-                                        <![CDATA[http://quote.rbc.ru/cgi-bin/conv/external/ext_informer/?type=hor&wtype=flex&stype=stand&w=100&h=142&bg=ffffff&brd=dddddd&txt=333333&sel=349764&font=tahoma&cur1=eur&cur2=rub&sum=1]]></xsl:attribute>
-                                </iframe>
-                            </div>
-                        </div>
-    -->
-                    </div>
-                </xsl:if>
-                <div class="col-md-5">
-                    <xsl:if test="count(news/item) = 0">
-                        <xsl:attribute name="class">col-md-8</xsl:attribute>
-                    </xsl:if>
-                    <div class="alert alert-info">
+                <div class="col-md-8">
+                    <div class="alert alert-info" style="text-align:center">
                         <h1>
                             <xsl:value-of select="@tour_name"/>
                         </h1>
+                        <h3>
+                            <xsl:value-of select="@tour_path"/>
+                        </h3>
                     </div>
                     <div class="box-container">
-                        <xsl:for-each select="tour_types/item">
-                            <a href="/turs/main_type-{id}/" class="btn btn-lg btn-success">
-                                <xsl:if test="id_main_type > 0">
-                                    <xsl:attribute name="href">/turs/sub_type-<xsl:value-of select="id"/>/</xsl:attribute>
-                                </xsl:if>
-                                <xsl:value-of select="btn_name"/>
-                            </a>
-                        </xsl:for-each>
+                        <div class="panel panel-info" style="width:100%">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">Программа тура</div>
+                            <div class="panel-body">
+                                <xsl:value-of select="item/overview" disable-output-escaping="yes"/>
+                            </div>
+                        </div>
+                        <div style="text-align:center">
+                            <div class="btn btn-success">Заказать тур</div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">

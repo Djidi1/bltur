@@ -1,55 +1,8 @@
 <?php
-class siteItem extends module_item {
-	public $id;
-	
-	public function __construct($Params, $prefix = '') {
-		parent::__construct ();
-		if ($prefix != '')
-			$prefix .= '_';
-		if (isset ( $Params [$prefix . 'id'] ))
-			$this->id = $Params [$prefix . 'id'];
-		else
-			$this->id = 0;
-		$this->notInsert ['id'] = 1;
-	}
-	
-	public function toArray() {
-		$Params ['id'] = $this->id;
-		return $Params;
-	}
-
-}
-class siteCollection extends module_collection {
-	
-	public function __construct() {
-		
-		parent::__construct ();
-	
-	}
-	
-	public function addItem($Params) {
-		
-		$item = new siteItem ( $Params );
-		
-		$this->add ( $item );
-	
-	}
-
-}
 class siteModel extends module_model {
 	public function __construct($modName) {
 		parent::__construct ( $modName );
-	}
-	/*
-			$param['type'] = $this->Vals->getVal ( 'type', 'POST', 'integer' );
-			$param['loc'] = $this->Vals->getVal ( 'loc', 'POST', 'array' );
-			$param['trans'] = $this->Vals->getVal ( 'transport', 'POST', 'array' );
-			$param['target'] = $this->Vals->getVal ( 'target', 'POST', 'array' );
-			$param['how_long'] = $this->Vals->getVal ( 'how_long', 'POST', 'array' );
-			$param['range'] = $this->Vals->getVal ( 'range', 'POST', 'string' );
-			$param['price_from'] = $this->Vals->getVal ( 'price_from', 'POST', 'string' );
-			$param['price_to'] = $this->Vals->getVal ( 'price_to', 'POST', 'string' ); */
-	
+	}	
 	
 	public function turList($param) {
         /* Умолачния  */
@@ -109,23 +62,23 @@ class siteModel extends module_model {
 		 ';
 		}
 	
-		$sql = 'SELECT t.`id`, t.`name`,t.`date`, t.date_to, t.days,
+		$sql = "SELECT t.`id`, t.`name`,t.`date`, t.date_to, t.days,
 		c.`name` city_name, l.`name` loc_name, t.fire, t.dop_info,
 		g.`name` gid_name, b.`number` bus_number,cost,currency, id_page,tur_type,overview,bus_size,tur_transport,tur_target,
 		(select count(*) from tc_tur_list tl WHERE tl.id_tur = t.`id`) turists
-		FROM ' . TAB_PREF . '`tc_tur` t
-		LEFT JOIN ' . TAB_PREF . 'tc_citys c ON t.id_city = c.id
-		LEFT JOIN ' . TAB_PREF . 'tc_locations l ON t.id_loc = l.id
-		LEFT JOIN ' . TAB_PREF . 'tc_gids g ON t.id_gid = g.id
-		LEFT JOIN ' . TAB_PREF . 'tc_bus b ON t.id_bus = b.id
+		FROM `tc_tur` t
+		LEFT JOIN tc_citys c ON t.id_city = c.id
+		LEFT JOIN tc_locations l ON t.id_loc = l.id
+		LEFT JOIN tc_gids g ON t.id_gid = g.id
+		LEFT JOIN tc_bus b ON t.id_bus = b.id
 		WHERE ((date >= NOW() - INTERVAL 1 DAY) or (t.date_to >= NOW() - INTERVAL 1 DAY and (t.tur_type = 3 or tur_target = 8)))
-			'.$pr_where.'
-			'.$other_where.'
-			'.$where.'
-			'.$add_where.'
+			$pr_where
+			$other_where
+			$where
+			$add_where
 			/*and datediff(`date`,now()) < 180*/
 		ORDER BY date
-		LIMIT 0,300';
+		LIMIT 0,300";
 		$this->query ( $sql );
 		echo "<!-- ".$this->sql." -->";
 	//		stop($this->sql,0);
@@ -149,12 +102,12 @@ class siteModel extends module_model {
 		$sql = 'SELECT t.`id`, t.`name`,`date`,c.`name` city_name, l.`name` loc_name, l.`id` loc_id,
 		g.`name` gid_name, b.`number` bus_number,cost,currency, t.fire,
 		(select count(*) from tc_tur_list tl WHERE tl.id_tur = t.`id`) turists
-		FROM ' . TAB_PREF . '`tc_tur` t
-		LEFT JOIN ' . TAB_PREF . 'tc_citys c ON t.id_city = c.id
-		LEFT JOIN ' . TAB_PREF . 'tc_locations l ON t.id_loc = l.id
-		LEFT JOIN ' . TAB_PREF . 'tc_gids g ON t.id_gid = g.id
-		LEFT JOIN ' . TAB_PREF . 'tc_bus b ON t.id_bus = b.id
-		WHERE t.`id` = '.$tur_id.'';
+		FROM `tc_tur` t
+		LEFT JOIN tc_citys c ON t.id_city = c.id
+		LEFT JOIN tc_locations l ON t.id_loc = l.id
+		LEFT JOIN tc_gids g ON t.id_gid = g.id
+		LEFT JOIN tc_bus b ON t.id_bus = b.id
+		WHERE t.`id` = '.$tur_id.' ';
 		//	stop($sql);
 		$this->query ( $sql );
 		$items = array ();
@@ -166,7 +119,7 @@ class siteModel extends module_model {
 	}
 	
 	public function getMenu() {
-		$sql = 'SELECT  id,  name,  `desc`,  url,  cost FROM '.TAB_PREF.'tc_menu;';
+		$sql = 'SELECT  id,  name,  `desc`,  url,  cost FROM tc_menu;';
 		$this->query($sql);
 		$items = array();
 		while(($row = $this->fetchRowA())!==false) {
@@ -175,7 +128,7 @@ class siteModel extends module_model {
 		return $items;
 	}
 	public function getType($type) {
-		$sql = 'SELECT  id,  name,  `desc`,  url,  cost FROM '.TAB_PREF.'tc_menu WHERE id = '.$type.';';
+		$sql = 'SELECT  id,  name,  `desc`,  url,  cost FROM tc_menu WHERE id = '.$type.';';
 		$this->query($sql);
 		$items = array();
 		while(($row = $this->fetchRowA())!==false) {
@@ -183,15 +136,65 @@ class siteModel extends module_model {
 		}
 		return $items;
 	}
-	public function getLocs() {
-		$sql = 'SELECT id, `name`, `color` FROM '.TAB_PREF.'`tc_locations` WHERE actual = 1';
-		$this->query($sql);
-		$items = array();
-		while(($row = $this->fetchRowA())!==false) {
-			$items[] = $row;
-		}
-		return $items;
-	}
+    public function getLocs() {
+        $sql = 'SELECT id, `name`, `color` FROM `tc_locations` WHERE actual = 1';
+        $this->query($sql);
+        $items = array();
+        while(($row = $this->fetchRowA())!==false) {
+            $items[] = $row;
+        }
+        return $items;
+    }
+
+    public function getTourTypePath($id, $prev_name) {
+        $sql = "SELECT tour_sub_name, parent_id  FROM tc_tour_sub_types WHERE id = $id";
+        $this->query($sql);
+        $item = $this->fetchRowA();
+        $name = $item['tour_sub_name'] . ($prev_name != ''?" / ".$prev_name:'');
+        $parent_id = $item['parent_id'];
+        if ($parent_id > 0){
+            $name = $this->getTourTypePath($parent_id, $name);
+        }
+        return $name;
+    }
+
+    public function getTourTypeName($id) {
+        $sql = "SELECT tour_main_title FROM tc_tour_main_types WHERE id = $id";
+        $this->query($sql);
+        return $this->getOne();
+    }
+    public function getTourTypes() {
+        $sql = 'SELECT id, tour_main_type btn_name, sort, dk FROM tc_tour_main_types';
+        $this->query($sql);
+        $items = array();
+        while(($row = $this->fetchRowA())!==false) {
+            $items[] = $row;
+        }
+        return $items;
+    }
+    public function getTourSubTypes($id,$id_sub) {
+	    if ($id_sub > 0){
+            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE parent_id = $id_sub";
+        }else {
+            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE id_main_type = $id";
+        }
+        $this->query($sql);
+        $items = array();
+        while(($row = $this->fetchRowA())!==false) {
+            $items[] = $row;
+        }
+        return $items;
+    }
+
+    public function getTourData($id) {
+        $sql = "SELECT tour_sub_name, id_main_type, sort, dk, p.overview 
+                FROM tc_tour_sub_types st 
+                LEFT JOIN tc_programs p ON p.id = st.id_program
+                WHERE st.id = $id";
+        $this->query($sql);
+        $items = $this->fetchRowA();
+        return $items;
+    }
 	public function getTopTen() {
 		$sql = 'SELECT 
 				  tt.id,
@@ -240,7 +243,7 @@ class siteModel extends module_model {
 		return $items;
 	}
 	public function getCountrys() {
-		$sql = 'SELECT * FROM ' . TAB_PREF . 'tc_countrys';
+		$sql = 'SELECT * FROM tc_countrys';
 		$this->query ( $sql );
 		$groups = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
@@ -250,7 +253,7 @@ class siteModel extends module_model {
 	}
 	public function getMP($loc_id) {
 		$where = ($loc_id>0)?' WHERE id_loc = '.$loc_id:'';
-		$sql = 'SELECT * FROM ' . TAB_PREF . 'tc_mp'.$where;
+		$sql = 'SELECT * FROM tc_mp'.$where;
 
 		$this->query ( $sql );
 		$groups = array ();
@@ -261,7 +264,7 @@ class siteModel extends module_model {
 	}
 	
 	public function orderUpdate($params) {
-		$sql = 'UPDATE ' . TAB_PREF . '`tc_tourists` SET
+		$sql = 'UPDATE `tc_tourists` SET
 		`name_f` = \'%1$s\',`name_i` = \'%2$s\',`name_o` = \'%3$s\',
 		`dob` = \'%4$s\',`passport` = \'%5$s\',`phone` = \'%6$s\',
 		`def_mp` = \'%7$u\',`country` = \'%8$u\',`comment` = \'%9$s\'
@@ -286,8 +289,8 @@ class siteModel extends module_model {
 			if ($params['turist_id'][$i]>0) {
 				$turist_id = $params['turist_id'][$i];
 			}else{
-				$sql = "INSERT INTO " . TAB_PREF . "tc_tourists
-							(  name_f ,name_i ,name_o ,dob ,country ,passport ,phone,name ,def_mp ,comment ,dk ,ban,new_site)
+				$sql = "INSERT INTO tc_tourists
+							(  name_f ,name_i ,name_o ,dob ,country ,passport ,phone, name, def_mp ,comment ,dk ,ban,new_site)
 						VALUES
 							(  '".$params['turist_f'][$i]."','".$params['turist_i'][$i]."','".$params['turist_o'][$i]."',
 								'".$this->dmy_to_mydate($params['turist_dob'][$i])."','".$params['turist_country'][$i]."','".$params['turist_passport'][$i]."',
@@ -296,7 +299,7 @@ class siteModel extends module_model {
 				$turist_id = $this->insertID();
 			}
 			
-			$sql = "INSERT INTO " . TAB_PREF . "tc_tur_list
+			$sql = "INSERT INTO tc_tur_list
 						(id_tur,id_tourist,id_mp,book_date,book_num,comment,cabin,number,
 						new_site,new_phone,new_passport,agent_id)
 					VALUES
@@ -334,10 +337,10 @@ class siteModel extends module_model {
 		$real_orders[] = $Order_ID;
 		if ($Order_ID > 10000000) { // Если заказ на оплату всех, то находим все заказы
 			$real_order = $Order_ID/1000;
-			$sql = "SELECT tl.id FROM " . TAB_PREF . "tc_tur_list tl
-					WHERE tl.id_tur = (SELECT tl2.id_tur FROM " . TAB_PREF . "tc_tur_list tl2  WHERE tl2.id = '$real_order')
-					AND tl.book_num = (SELECT tl3.book_num FROM " . TAB_PREF . "tc_tur_list tl3  WHERE tl3.id = '$real_order')
-					AND (SELECT COUNT(*) FROM  " . TAB_PREF . "tc_view_bank_results vbr WHERE vbr.Order_ID = tl.id) = 0
+			$sql = "SELECT tl.id FROM tc_tur_list tl
+					WHERE tl.id_tur = (SELECT tl2.id_tur FROM tc_tur_list tl2  WHERE tl2.id = '$real_order')
+					AND tl.book_num = (SELECT tl3.book_num FROM tc_tur_list tl3  WHERE tl3.id = '$real_order')
+					AND (SELECT COUNT(*) FROM  tc_view_bank_results vbr WHERE vbr.Order_ID = tl.id) = 0
 					AND tl.payed = 0";
 			$this->query ( $sql );
 			$real_orders = array ();
@@ -347,7 +350,7 @@ class siteModel extends module_model {
 		}
         $test = false;
 		foreach ($real_orders as $real_order) {
-			$sql = "INSERT INTO " . TAB_PREF . "tc_bank_results ( Order_ID, Status, dk ) VALUES ('$real_order','$Status', NOW())";
+			$sql = "INSERT INTO tc_bank_results ( Order_ID, Status, dk ) VALUES ('$real_order','$Status', NOW())";
 			$test = $this->query ( $sql );
 		}
 		return $test;
@@ -358,15 +361,15 @@ class siteModel extends module_model {
 		$kurs = 60+60*.02;
 		$sql = 'SELECT tl.id,tl.id_tur,tt.name_f,tt.name_i,tt.name_o, tt.phone, tt.dob,tt.passport,
 		mp.`name`, tl.book_date,tl.book_num, tl.`comment`,tl.`cabin`,tl.`number`,tl.new_site, tl.payed,tc.cost,tc.currency,
-		(SELECT count(*) FROM ' . TAB_PREF . 'tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name,
-		(SELECT COUNT(*) FROM  ' . TAB_PREF . 'tc_view_bank_results vbr WHERE vbr.Order_ID = tl.id) bank_payed
-		FROM ' . TAB_PREF . '`tc_tur_list` tl
- 		LEFT JOIN ' . TAB_PREF . 'tc_tur tc ON tl.id_tur = tc.id
-		LEFT JOIN ' . TAB_PREF . 'tc_tourists tt ON tl.id_tourist = tt.id
-		LEFT JOIN ' . TAB_PREF . 'tc_mp mp ON tl.id_mp = mp.id
+		(SELECT count(*) FROM tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name,
+		(SELECT COUNT(*) FROM  tc_view_bank_results vbr WHERE vbr.Order_ID = tl.id) bank_payed
+		FROM `tc_tur_list` tl
+ 		LEFT JOIN tc_tur tc ON tl.id_tur = tc.id
+		LEFT JOIN tc_tourists tt ON tl.id_tourist = tt.id
+		LEFT JOIN tc_mp mp ON tl.id_mp = mp.id
 	
-		WHERE tl.id_tur = (SELECT tl2.id_tur FROM ' . TAB_PREF . 'tc_tur_list tl2  WHERE tl2.id = \''.$order.'\')
-		AND tl.book_num = (SELECT tl3.book_num FROM ' . TAB_PREF . 'tc_tur_list tl3  WHERE tl3.id = \''.$order.'\')
+		WHERE tl.id_tur = (SELECT tl2.id_tur FROM tc_tur_list tl2  WHERE tl2.id = \''.$order.'\')
+		AND tl.book_num = (SELECT tl3.book_num FROM tc_tur_list tl3  WHERE tl3.id = \''.$order.'\')
 		';
 
 		$this->query ( $sql );
@@ -385,15 +388,15 @@ class siteModel extends module_model {
 		$kurs = 60+60*.02;
 		$sql = 'SELECT tl.id,tl.id_tur,tt.name_f,tt.name_i,tt.name_o, tt.phone, tt.dob,tt.passport,
 		mp.`name`, tl.book_date,tl.book_num, tl.`comment`,tl.`cabin`,tl.`number`,tl.new_site, tl.payed,tc.cost,tc.currency,
-		(SELECT count(*) FROM ' . TAB_PREF . 'tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name
-		FROM ' . TAB_PREF . '`tc_tur_list` tl
- 		LEFT JOIN ' . TAB_PREF . 'tc_tur tc ON tl.id_tur = tc.id
-		LEFT JOIN ' . TAB_PREF . 'tc_tourists tt ON tl.id_tourist = tt.id
-		LEFT JOIN ' . TAB_PREF . 'tc_mp mp ON tl.id_mp = mp.id
+		(SELECT count(*) FROM tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name
+		FROM `tc_tur_list` tl
+ 		LEFT JOIN tc_tur tc ON tl.id_tur = tc.id
+		LEFT JOIN tc_tourists tt ON tl.id_tourist = tt.id
+		LEFT JOIN tc_mp mp ON tl.id_mp = mp.id
 	
-		WHERE tl.id_tur = (SELECT tl2.id_tur FROM ' . TAB_PREF . 'tc_tur_list tl2  WHERE tl2.id = \''.$order.'\')
-		AND tl.book_num = (SELECT tl3.book_num FROM ' . TAB_PREF . 'tc_tur_list tl3  WHERE tl3.id = \''.$order.'\')
-		AND (SELECT COUNT( * ) FROM  ' . TAB_PREF . '`tc_view_bank_results` vbr WHERE vbr.Order_ID = tl.id)=0
+		WHERE tl.id_tur = (SELECT tl2.id_tur FROM tc_tur_list tl2  WHERE tl2.id = \''.$order.'\')
+		AND tl.book_num = (SELECT tl3.book_num FROM tc_tur_list tl3  WHERE tl3.id = \''.$order.'\')
+		AND (SELECT COUNT( * ) FROM  `tc_view_bank_results` vbr WHERE vbr.Order_ID = tl.id)=0
 		AND tl.payed = 0
 		';
 
@@ -413,11 +416,11 @@ class siteModel extends module_model {
 		$kurs = 60+60*.02;
 		$sql = 'SELECT tl.id,tl.id_tur,tt.name_f,tt.name_i,tt.name_o, tt.phone, tt.dob,tt.passport,
 		mp.`name`, tl.book_date,tl.book_num, tl.`comment`,tl.`cabin`,tl.`number`,tl.new_site, tl.payed,tc.cost,tc.currency,
-		(SELECT count(*) FROM ' . TAB_PREF . 'tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name
-		FROM ' . TAB_PREF . '`tc_tur_list` tl
- 		LEFT JOIN ' . TAB_PREF . 'tc_tur tc ON tl.id_tur = tc.id
-		LEFT JOIN ' . TAB_PREF . 'tc_tourists tt ON tl.id_tourist = tt.id
-		LEFT JOIN ' . TAB_PREF . 'tc_mp mp ON tl.id_mp = mp.id
+		(SELECT count(*) FROM tc_tur_list tl2 WHERE tl2.id_tourist=tt.id) as c_tours,tl.id_tourist,tc.name tur_name
+		FROM `tc_tur_list` tl
+ 		LEFT JOIN tc_tur tc ON tl.id_tur = tc.id
+		LEFT JOIN tc_tourists tt ON tl.id_tourist = tt.id
+		LEFT JOIN tc_mp mp ON tl.id_mp = mp.id
 	
 		WHERE tl.id = \''.$order.'\'';
 	
@@ -557,27 +560,7 @@ class siteProcess extends module_process {
 		}
 		$user_id = $this->User->getUserID ();
 		$user_group_id = $this->User->getUserGroup ();
-		
-	/*	
-		$user_tab_no = $this->User->getUserTabNo ();
-		$user_right = $this->User->getRight ( $this->modName, $action );
-		if ($user_right == 0 && $user_id > 0) {
-			$p = array ('У Вас нет прав для использования модуля', '$this->modName' => $this->modName, 'action' => $action, 'user_id' => $user_right, 'user_right' => $user_right );
-			$this->nView->viewError ( 'У Вас нет прав на это действие', 'Предупреждение' );
-			$this->Log->addError ( $p, __LINE__, __METHOD__ );
-			
-			return;
-		}
-		
-		if ($user_right == 0 && $user_id == 0 && ! $_action) {
-			$this->nView->viewLogin ( 'Система БЛТ', '', $user_id, array (), array () );
-			
-			return;
-		}
-		
-		if ($user_id > 0 && ! $_action) {
-			$this->User->nView->viewLoginParams ( 'Система БЛТ', '', $user_id, array (), array (), $this->User->getRight ( 'admin', 'view' ) );
-		}*/
+
 		if ($user_id > 0) {
 			$this->User->nView->viewLoginParams ( 'Система БЛТ', '', $user_id, array (), array (), $this->User->getRight ( 'admin', 'view' ) );
 		}
@@ -587,13 +570,28 @@ class siteProcess extends module_process {
 		}
 		
 		if ($action == 'view') {
-			$items = $this->nModel->getMenu ();
-			$locs = $this->nModel->getLocs ();
-			$topten = $this->nModel->getTopTen ();
-            /* показать список новостей */
-            $news = $this->nModel->getNewsList(3);
-			$this->nView->viewTur ($items,$locs,$topten,$news);
-			
+            $id_main_type = $this->Vals->getVal ( 'main_type', 'GET', 'integer' );
+            $id_sub_type = $this->Vals->getVal ( 'sub_type', 'GET', 'integer' );
+            $topten = $this->nModel->getTopTen ();
+            if ($id_main_type > 0 or $id_sub_type > 0){
+                $tour_types = $this->nModel->getTourSubTypes ($id_main_type, $id_sub_type);
+                if (isset($tour_types[0]['id_main_type'])) {
+                    $tour_name = $this->nModel->getTourTypeName($tour_types[0]['id_main_type']);
+                }else{
+                    $tour_data = $this->nModel->getTourData($id_sub_type);
+                    $tour_name = $this->nModel->getTourTypeName($tour_data['id_main_type']);
+                    $tour_path = $this->nModel->getTourTypePath($id_sub_type, '');
+                    $this->nView->viewTurData($tour_name, $tour_path, $tour_data, $topten);
+                }
+            }else{
+                $tour_types = $this->nModel->getTourTypes ();
+                $tour_name = '';
+            }
+		    if (isset($tour_types) and !isset($tour_data)) {
+                /* показать список новостей */
+                $news = (isset($tour_name) and $tour_name != '')?array():$this->nModel->getNewsList(3);
+                $this->nView->viewTur($tour_name, $tour_types, $topten, $news);
+            }
 		}
 		
 		if ($action == 'type') {
@@ -733,8 +731,8 @@ class siteProcess extends module_process {
 			$email = $this->Vals->getVal ( 'signup-email', 'POST', 'string' );
 			$name = $this->Vals->getVal ( 'signup-name', 'POST', 'string' );
 			//Подчищаем данные
-			$email = mysql_real_escape_string($email);
-			$name = mysql_real_escape_string($name);
+			$email = $this->mysql_escape_mimic($email);
+			$name = $this->mysql_escape_mimic($name);
 				
 			//Проверяем адрес email
 			if(empty($email)){
@@ -794,7 +792,19 @@ class siteProcess extends module_process {
 
 
 	}
-	// Функции оплаты
+
+    public function mysql_escape_mimic($inp) {
+        if (is_array($inp))
+            return array_map(__METHOD__, $inp);
+
+        if (!empty($inp) && is_string($inp)) {
+            return str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $inp);
+        }
+
+        return $inp;
+    }
+
+// Функции оплаты
 	public function getSignature( $Shop_IDP, $Order_IDP, $Subtotal_P, $MeanType, $EMoneyType,
 			$Lifetime, $Customer_IDP, $Card_IDP, $IData, $PT_Code, $password ) {
 		$Signature = strtoupper(
@@ -825,17 +835,14 @@ class siteView extends module_View {
 		$this->pXSL = array ();
 	}
 	
-	public function viewTur($items,$locs,$topten,$news) {
+	public function viewTur($tour_name, $tour_types, $topten, $news) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.view.xsl';
-		$Container = $this->newContainer ( 'turlist' );
-		$ContainerMenu = $this->addToNode ( $Container, 'menu', '' );
-		foreach ( $items as $item ) {
-			$this->arrToXML ( $item, $ContainerMenu, 'item' );
-		}
-		$ContainerLocs = $this->addToNode ( $Container, 'locs', '' );
-		foreach ( $locs as $item ) {
-			$this->arrToXML ( $item, $ContainerLocs, 'item' );
-		}
+        $Container = $this->newContainer ( 'turlist' );
+        $this->addAttr('tour_name',$tour_name, $Container);
+        $ContainerTourTypes = $this->addToNode ( $Container, 'tour_types', '' );
+        foreach ( $tour_types as $item ) {
+            $this->arrToXML ( $item, $ContainerTourTypes, 'item' );
+        }
 		$ContainerTopTen = $this->addToNode ( $Container, 'topten', '' );
 		foreach ( $topten as $item ) {
 			$this->arrToXML ( $item, $ContainerTopTen, 'item' );
@@ -843,6 +850,18 @@ class siteView extends module_View {
 		$ContainerNews = $this->addToNode ( $Container, 'news', '' );
 		foreach ( $news as $item ) {
 			$this->arrToXML ( $item, $ContainerNews, 'item' );
+		}
+		return true;
+	}
+	public function viewTurData($tour_name, $tour_path, $tour_data, $topten) {
+		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.data.xsl';
+        $Container = $this->newContainer ( 'turlist' );
+        $this->addAttr('tour_name',$tour_name, $Container);
+        $this->addAttr('tour_path',$tour_path, $Container);
+        $this->arrToXML ( $tour_data, $Container, 'item' );
+		$ContainerTopTen = $this->addToNode ( $Container, 'topten', '' );
+		foreach ( $topten as $item ) {
+			$this->arrToXML ( $item, $ContainerTopTen, 'item' );
 		}
 		return true;
 	}

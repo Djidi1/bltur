@@ -1,4 +1,15 @@
-@media print {BODY>* {display: none; } DIV.printBlock { display: block !important; }} 
+@media print {BODY>* {display: none; } DIV.printBlock { display: block !important; }}
+
+.box-container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+}
 
 div#form_login {max-width: 300px;float: right;margin-left: 25px;border: 1px solid #D3E5F7;padding: 10px;border-radius: 5px;background-color: #F2F8FF;}
 #admin div#form_login {float: left !important;}
@@ -74,9 +85,7 @@ a.addToCart {display: inline-block;text-decoration: none;cursor: pointer;backgro
 .tile-image {  height: 100px;  margin: 31px 0 27px;  vertical-align: bottom;}
 .tile-image.big-illustration {  height: 111px;  margin-top: 20px;  width: 112px;}
 .tile-title {  font-size: 20px;  margin: 0;}
-@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3/2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-moz-min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 1.5), only screen and (min-device-pixel-ratio: 2) {
-  .tile.tile-hot:before {    background-image: url('/images/tile/ribbon-2x.png');  }
-}
+
 .thumbnail {cursor:pointer;}
 .rotate {
 /* Safari */

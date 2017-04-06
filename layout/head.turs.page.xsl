@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/TR/xhtml1/strict">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template name="turs_head">
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -7,37 +7,36 @@
 			<title>Балтик Лайнс Тур | Туры: СПб, Россия, Финляндия, Прибалтика</title>
 			<meta name="description" content="Балтик Лайнс Тур | Туры: СПб, Россия, Финляндия, Прибалтика"/>
 			<link href="./images/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon"/>
-			<link rel="stylesheet" href="./css/facebox.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/camera.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/jquery-ui.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/style.css?v3" type="text/css"/>
-			<link rel="stylesheet" href="./css/custom.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/camera.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/stylesheet.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/system.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/position.css" type="text/css" media="screen,projection"/>
-			<link rel="stylesheet" href="./css/layout.css" type="text/css" media="screen,projection"/>
-			<link rel="stylesheet" href="./css/print.css" type="text/css" media="Print"/>
-			<link rel="stylesheet" href="./css/virtuemart.css?v2" type="text/css"/>
-			<link rel="stylesheet" href="./css/products.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/personal.css" type="text/css"/>
-			<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css" type="text/css"/>
-			<link rel="stylesheet" href="./css/bootstrap.min.css" type="text/css"/>
-			<link rel="stylesheet" href="/css/bootstrap-slider.css" type="text/css"/>
-			<!--<link rel="stylesheet" href="./css/flatui.css" type="text/css"/>-->
-			<script src="./js/jquery.min.js" type="text/javascript"/>
-			<script src="./js/jquery-ui.min.js" type="text/javascript"/>
-			<script src="./js/bootstrap.min.js" type="text/javascript"/>
-			<script src="./js/bootbox.min.js" type="text/javascript"/>
-			<script src="./js/jquery.multiselect.min.js?v1" type="text/javascript"/>
-			<script src="./js/jquery.maskinput.min.js" type="text/javascript"/>
-			<script src="./js/camera.min.js" type="text/javascript"/>
-			<script type="text/javascript" src="./js/ready.js?v1"/>
-			<script type="text/javascript" src="./js/script.js?v1"/>
-			<script type="text/javascript" src="/callme/js/callme.js"/>
-			<script type="text/javascript" src="/js/bootstrap-slider.js"/>
-		<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+			<link rel="stylesheet" href="./css/facebox.css"/>
+			<link rel="stylesheet" href="./css/camera.css"/>
+			<link rel="stylesheet" href="./css/jquery-ui.css"/>
+			<link rel="stylesheet" href="./css/style.css?v3"/>
+			<link rel="stylesheet" href="./css/custom.css"/>
+			<link rel="stylesheet" href="./css/camera.css"/>
+			<link rel="stylesheet" href="./css/stylesheet.css"/>
+			<link rel="stylesheet" href="./css/system.css"/>
+			<link rel="stylesheet" href="./css/position.css" media="screen,projection"/>
+			<link rel="stylesheet" href="./css/layout.css" media="screen,projection"/>
+			<link rel="stylesheet" href="./css/print.css" media="Print"/>
+			<link rel="stylesheet" href="./css/virtuemart.css?v2"/>
+			<link rel="stylesheet" href="./css/products.css"/>
+			<link rel="stylesheet" href="./css/personal.css"/>
+			<link rel="stylesheet" href="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.css"/>
+			<link rel="stylesheet" href="./css/bootstrap.min.css"/>
+			<link rel="stylesheet" href="/css/bootstrap-slider.css"/>
+			<script src="/js/jquery.min.js" />
+			<script src="/js/jquery-ui.min.js" />
+			<script src="/js/bootstrap.min.js" />
+			<script src="/js/bootbox.min.js" />
+			<script src="/js/jquery.multiselect.min.js?v1" />
+			<script src="/js/jquery.maskinput.min.js" />
+			<script src="/js/camera.min.js" />
+			<script src="/js/ready.js?v1"/>
+			<script src="/js/script.js?v1"/>
+			<script src="/callme/js/callme.js"/>
+			<script src="/js/bootstrap-slider.js"/>
+			<script language="javascript" src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"/>
+			<script language="javascript" src="//cdn.datatables.net/plug-ins/3cfcc339e89/integration/bootstrap/3/dataTables.bootstrap.js"/>
 			<script src="/ckeditor/ckeditor.js?v1"/>
 			<script> 
 				var roxyFileman = '/fileman/index.html'; 
@@ -46,7 +45,7 @@
 				});
 			</script>
 			<!--[if IE 8]>
-	<link href="./css/ie8only.css" rel="stylesheet" type="text/css" />
+	<link href="./css/ie8only.css" rel="stylesheet" />
 <![endif]-->
 			<!--[if lt IE 8]>
     <div style=' clear: both; text-align:center; position: relative; z-index:9999;'>
@@ -54,14 +53,11 @@
     </div>
 <![endif]-->
 			<!--[if lt IE 9]>
-<script type="text/javascript" src="./js/html5.js"></script>
+<script  src="./js/html5.js"></script>
 <![endif]-->
 		</head>
 	</xsl:template>
 	<xsl:template name="turs_headWrap">
-		<xsl:variable name="content">
-			<xsl:value-of select="//page/body/@contentContainer"/>
-		</xsl:variable>
 		<div id="header">
 			<div class="row-head">
 				<div class="relative">
@@ -136,8 +132,7 @@
 					<ins/>8 812 383-77-73</span>
 				<span class="address" style="">
 					<ins/>
-					<a href="/pages/view-29/">м.Невский Проспект, <nobr>канал Грибоедова д.3, офис 321</nobr>
-					</a>
+					Санкт-Петербург, <nobr>ул. Хрустальная д.27, офис 4</nobr>
 				</span>
 			</div>
 			<div class="logoheader">

@@ -84,13 +84,13 @@ class TValues {
       if (!isset($result)) {
         $r = NULL;
         switch ($type) {
-          case false: $r='NULL'; break;
+          case false: $r=''; break;
           case 'int':
           case 'integer':  $r = intval(0); break;
           case 'str':  $r = strval(''); break;
           case 'string':  $r = strval(''); break;
           case 'array':  $r = array(); break;
-          default: $r=NULL; $this->varError = true; break;
+          default: $r=''; $this->varError = true; break;
         }
       } else {
         $r = $result;
@@ -101,11 +101,11 @@ class TValues {
           case 'str':  $r = strval($r); break;
           case 'string':  $r = strval($r); break;
           case 'array':  if (!is_array($r)) $r = array($r); break;
-          default: $r=NULL; $this->varError = true; break;
+          default: $r=''; $this->varError = true; break;
         }
 
       }
-      $this->log->addToLog('Запрос переменной: '.$valName.' '.$r.' '.$method, __LINE__, __METHOD__, __CLASS__);
+      $this->log->addToLog('Запрос переменной: '.json_encode($valName).' '.json_encode($r).' '.$method, __LINE__, __METHOD__, __CLASS__);
       return $result;
     }   
     /**

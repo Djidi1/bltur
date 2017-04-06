@@ -2,7 +2,7 @@
 
 define ('ACTION_PUBLIC', 1);
 define ('ACTION_AUTCH' , 2);
-/**
+/*
  *
  * @var Доступ по группе
  */
@@ -14,7 +14,6 @@ define ('ACTION_GROUP' , 3);
  */
 
 function modulePreload($modName) {
-	global $LOG;
 	$database = new database();
 	$sql = 'SELECT
 			m.*, 
@@ -30,10 +29,10 @@ function modulePreload($modName) {
 			m2.defAction as addon_module_defAction,
 			m2.defQueryString as  addon_module_defQueryString,
 			m2.isSystem as addon_module_isSystem			
-			FROM '.TAB_PREF.'modules m
-			LEFT JOIN '.TAB_PREF.'module_addons_assign mas ON mas.addon_id = m.addons
-			LEFT JOIN '.TAB_PREF.'module_addons mad ON mad.id = mas.addon_id
-			LEFT JOIN '.TAB_PREF.'modules m2 ON mas.mod_id = m2.id
+			FROM modules m
+			LEFT JOIN module_addons_assign mas ON mas.addon_id = m.addons
+			LEFT JOIN module_addons mad ON mad.id = mas.addon_id
+			LEFT JOIN modules m2 ON mas.mod_id = m2.id
 			WHERE m.`codename` = \'%1$s\'';
 	$database->query($sql, $modName);
   //	if ($database->numRows() == 0) return false;
@@ -111,13 +110,8 @@ abstract class module_item {
 		$v = '';
 		$p = array();
 		//stop(DB_USE);
-		if(DB_USE == 'mySQL') {
-			$sql_e1 = '`';
-			$sql_e2 = '`';
-		} elseif (DB_USE == 'MSSQL') {
-			$sql_e1 = '[';
-			$sql_e2 = ']';
-		}
+        $sql_e1 = '`';
+        $sql_e2 = '`';
 		$index = 1;
 		$array_keys = $this->toArray();
 		#stop($this->notInsert,0);
@@ -142,13 +136,13 @@ abstract class module_item {
 //		$root = $xml->appendChild($xml->createElement('itm'));
 //		$item = $root->appendChild($xml->createElement('item'));
 	}
-	/**
+	/*
 	 * Возвращает Класс в виде Массива
 	 * @return unknown_type
 	 */
 	abstract public function toArray();		
 
-	/**
+	/*
 	 * 
 	 * @param $thisTable Таблица(1) для соединения
 	 * @param $pref Префикс таблицы(1)
@@ -318,7 +312,6 @@ class moduleAction extends module_item {
 	public $groups;
 
 	public function __construct ($Params) {
-		global $LOG;
 		parent::__construct();
 		if (isset($Params['id'])) $this->id = $Params['id']; else $this->id = 0;
 		#if (!$this->id) $this->id = time();
@@ -650,7 +643,7 @@ class module_model extends database {
 	protected $modSet;
 	protected $System;
 	protected $User;
-	
+
 	public function __construct($modName) {
 		global $LOG,$System, $User;
 		
@@ -659,7 +652,7 @@ class module_model extends database {
 		$this->System = $System;
 		$this->User = $User;
 		$this->Log = $LOG;
-								
+
 		$sql = 'SELECT * FROM '.TAB_PREF.'modules WHERE codename = \'%1$s\'';
 //        exit;
 //        stop($this->dbSelected);
@@ -696,8 +689,8 @@ class module_model extends database {
 		$this->query($q);
 		$id = $this->insertID();
 		if ($action->group_adm == 0 && $id > 0) {
-			$sql = 'INSERT INTO '.TAB_PREF.'module_access (`action_id`, `group_id`, `access`) VALUES( %1$u, %2$u, %3$u)';
-			$this->query($sql, $id, $group_id, $group_access);
+			$sql = "INSERT INTO module_access (`action_id`, `group_id`, `access`) VALUES( $id, $group_id, $group_access)";
+			$this->query($sql);
 		} else $this->Log->addError(array('Действие не связано',$action->group_adm, $id),__line__,__method__);
 		$action->setVal('id', $id);
 		if ($action->id == 0) return false;
@@ -710,10 +703,10 @@ class module_model extends database {
 	 * @return true
 	 */
 	public function delAction (moduleAction $action) {
-		$sql = 'DELETE FROM '.TAB_PREF.'module_access WHERE `action_id` = %1$u';
-		$this->query($sql, $action->id);
-		$sql = 'DELETE FROM '.TAB_PREF.'module_actions WHERE id = %1$u';
-		$this->query($sql, $action->id);
+		$sql = 'DELETE FROM module_access WHERE `action_id` = '.$action->id;
+		$this->query($sql);
+		$sql = 'DELETE FROM module_actions WHERE id = '.$action->id;
+		$this->query($sql);
 		return true;
 	}
 	/*
@@ -724,14 +717,14 @@ class module_model extends database {
 	 * @return true
 	 */
 	public function addActionToGroup($action_id, $group_id, $access) {
-		$sql = 'INSERT INTO '.TAB_PREF.'module_access (`action_id`, `group_id`, `access`) VALUES( %1$u, %2$u, %3$u)';
-		$this->query($sql, $action_id, $group_id, $access);
+		$sql = "INSERT INTO module_access (`action_id`, `group_id`, `access`) VALUES( $action_id, $group_id, $access)";
+		$this->query($sql);
 		return true;
 	}
 
 	public function delActionFromGroup ($action_id, $group_id) {
-		$sql = 'DELETE FROM '.TAB_PREF.'module_access WHERE `action_id` = %1$u AND `group_id` = %2$u';
-		$this->query($sql, $action_id, $group_id);
+		$sql = "DELETE FROM module_access WHERE `action_id` = $action_id AND `group_id` = $group_id";
+		$this->query($sql);
 		return true;
 	}
 
@@ -743,12 +736,12 @@ class module_model extends database {
             LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
             WHERE mod_id = %1$u AND action_name = \'%2$s\'';
             */
-            $sql = 'SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM '.TAB_PREF.'module_actions ma
-            INNER JOIN '.TAB_PREF.'modules m ON ma.mod_id = m.id
-            LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE mod_id = %1$u AND action_name = \'%2$s\'';
-		$this->query($sql, $module_id, $action_name);
+            $sql = "SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
+            FROM module_actions ma
+            INNER JOIN modules m ON ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
+            WHERE mod_id = $module_id AND action_name = '$action_name'";
+		$this->query($sql);
 		$row = $this->fetchOneRowA();
 		$action = new moduleAction($row);
 		return $action;
@@ -765,12 +758,12 @@ class module_model extends database {
             */
 
             $sql = 'SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM '.TAB_PREF.'module_actions ma
-            INNER JOIN '.TAB_PREF.'modules m ON ma.mod_id = m.id
-            LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE ma.id = %1$u';
+            FROM module_actions ma
+            INNER JOIN modules m ON ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
+            WHERE ma.id = '.$action_id;
 
-			$this->query($sql, $action_id);
+			$this->query($sql);
 			$row = $this->fetchOneRowA();
 			$action = new moduleAction($row);
 			return $action;
@@ -791,11 +784,11 @@ class module_model extends database {
             WHERE ma.mod_id = %1$u';
             */
        		$sql = 'SELECT ma.*, mc.group_id as group_adm, m.name as mod_name
-            FROM '.TAB_PREF.'module_actions ma
-            INNER JOIN '.TAB_PREF.'modules m ON ma.mod_id = m.id
-            LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
-            WHERE ma.mod_id = %1$u';
-		$this->query($sql, $module_id);
+            FROM module_actions ma
+            INNER JOIN modules m ON ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = 1
+            WHERE ma.mod_id = '.$module_id;
+		$this->query($sql);
 		$coll = new actionColl();
 		while ($row = $this->fetchRowA()) {
 			$coll->addItem($row);
@@ -830,16 +823,16 @@ class module_model extends database {
                 g.name as gname,
                 u.name as uname,
                mc.group_id as group_adm
-            FROM '.TAB_PREF.'module_actions ma
-            INNER JOIN '.TAB_PREF.'modules m ON  ma.mod_id = m.id
-            LEFT JOIN '.TAB_PREF.'module_access mc ON ma.id = mc.action_id
-            INNER JOIN '.TAB_PREF.'groups_user ug ON mc.group_id = ug.group_id
-            INNER JOIN '.TAB_PREF.'groups g ON ug.group_id = g.id
-            INNER JOIN '.TAB_PREF.'users u ON ug.user_id = u.id
-            WHERE ma.mod_id = %1$u';
-		if ($user_id > 0) $sql.= ' AND ug.user_id = %2$u';
+            FROM module_actions ma
+            INNER JOIN modules m ON  ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id
+            INNER JOIN groups_user ug ON mc.group_id = ug.group_id
+            INNER JOIN groups g ON ug.group_id = g.id
+            INNER JOIN users u ON ug.user_id = u.id
+            WHERE ma.mod_id = '.$module_id;
+		if ($user_id > 0) $sql.= ' AND ug.user_id = '.$user_id;
 
-		$this->query($sql, $module_id, $user_id);
+		$this->query($sql);
 		$coll = array();
 		$lastID = 0;
 		$lastGR = '';
@@ -898,7 +891,7 @@ class module_model extends database {
 	}
 
 	public function getGroups() {
-		$sql = 'SELECT * FROM '.TAB_PREF.'`groups`';		
+		$sql = 'SELECT * FROM `groups` WHERE hidden != 1';
 		$this->query($sql);
 		$groups = array();		
 		while($row = $this->fetchRowA()) {			
@@ -971,7 +964,7 @@ abstract class module_process {
 	protected $nModel;
 	protected $nView;
 	private $pXSL;
-	private $updated;
+	public $updated;
 
 	protected $sysMod ;
 	/*

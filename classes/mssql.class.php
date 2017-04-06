@@ -71,7 +71,7 @@ class MSSQL {
 		return $this->result;
 	}
 
-	protected function fetchRow() {
+	public function fetchRow() {
 		global $LOG;
 
 		if(!is_resource($this->result)) #die ('Отсутствет результат запроса'.br.mssql_error().$this->sql);

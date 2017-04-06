@@ -10,15 +10,15 @@ class adminModel extends module_model {
 	}
 	
 	public function userCreate($username, $email, $login, $pass, $ip, $group_id, $tab_no) {
-		$sql = 'INSERT INTO ' . TAB_PREF . '`users` (`name`, `email`, `login`, `pass`, `ip`, `date_reg`, `isban`, `tab_no`)
+		$sql = 'INSERT INTO `users` (`name`, `email`, `login`, `pass`, `ip`, `date_reg`, `isban`, `tab_no`)
   				VALUES
   				(\'%1$s\', \'%2$s\', \'%3$s\', \'%4$s\', \'%5$s\', NOW(), 0, \'%6$s\')';
 		$a = $this->query ( $sql, $username, $email, $login, $pass, $ip, $tab_no );
 		$user_id = $this->insertID ();
 		if ($user_id == 0)
 			return false;
-		$sql = 'INSERT INTO ' . TAB_PREF . '`groups_user` (`group_id`, `user_id`) VALUES (%1$u, %2$u)';
-		$b = $this->query ( $sql, $group_id, $user_id );
+		$sql = "INSERT INTO `groups_user` (`group_id`, `user_id`) VALUES ($group_id, $user_id)";
+		$b = $this->query ( $sql);
 		if ($a && $b) {
 			$this->Log->addToLog ( 'Зарегистрирован новый пользователь', __LINE__, __METHOD__ );
 			return $user_id;
@@ -26,7 +26,7 @@ class adminModel extends module_model {
 		return false;
 	}
 	public function userUpdate($username, $email, $login, $tab_no, $pass, $ip, $group_id, $isBan, $user_id) {
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
+		$sql = 'UPDATE `users`
 				SET `name` = \'%1$s\', `email` = \'%2$s\', `login` = \'%3$s\', tab_no = \'%4$s\', ';
 		$passi = '';
 		if ($pass != '') {
@@ -38,8 +38,8 @@ class adminModel extends module_model {
 		if (! $this->query ( $sql, $username, $email, $login, $tab_no, $passi, $ip, $group_id, $isBan, $user_id ))
 			return false;
 		
-		$sql = 'UPDATE ' . TAB_PREF . '`groups_user` SET `group_id`  = %1$u WHERE `user_id` = %2$u';
-		$this->query ( $sql, $group_id, $user_id );
+		$sql = "UPDATE `groups_user` SET `group_id`  = $group_id WHERE `user_id` = $user_id";
+		$this->query ( $sql);
 
 		return true;
 	}
@@ -48,71 +48,51 @@ class adminModel extends module_model {
 		$type = 1;
 		if ($full)
 			$type = 2;
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
-				SET `isBan` = %2$u
-                WHERE `id` = %1$u';
-		$this->query ( $sql, $user_id, $type );
+		$sql = "UPDATE `users`
+				SET `isban` = $type
+                WHERE `id` = $user_id";
+		$this->query ( $sql);
 		return true;
 	}
 	
 	public function groupHide($group_id) {
-		$sql = ' UPDATE ' . TAB_PREF . 'groups
-                SET [hidden] = 1
-                WHERE id = %1$u';
-		$this->query ( $sql, $group_id );
+		$sql = "UPDATE groups
+                SET hidden = 1
+                WHERE id = $group_id";
+		$this->query ( $sql );
 		return true;
 	}
 	public function groupCount($group_id) {
-		$sql = ' SELECT COUNT(group_id) as count
-  				FROM ' . TAB_PREF . 'groups_user
-  				where group_id= %1$u';
-		$this->query ( $sql, $group_id );
-		$count = array ();
+		$sql = "SELECT COUNT(group_id) as count
+  				FROM groups_user
+  				where group_id= $group_id";
+		$this->query ( $sql);
 		$count = $this->fetchOneRowA ();
 		return $count;
 	}
 	
 	public function userUnBan($user_id) {
-		$sql = 'UPDATE ' . TAB_PREF . '`users`
-				SET `isBan` = 0
-                WHERE `id` = %1$u';
-		$this->query ( $sql, $user_id );
-		return true;
-	}
-	
-	public function user_rights($user_id) {
-		$sql = 'SELECT [allow]  FROM ' . TAB_PREF . 'user_rights  where right_id=1 AND [user_id]=' . $user_id;
+		$sql = "UPDATE `users`
+				SET `isban` = 0
+                WHERE `id` = $user_id";
 		$this->query ( $sql );
-		$user_rights = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$user_rights [] = $row;
-		}
-		return $user_rights;
+		return true;
 	}
 	
 	public function userGet($user_id) {
 		
 		if (! $user_id)
 			return false;
-		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
-				FROM ' . TAB_PREF . '`users` u
-				LEFT JOIN ' . TAB_PREF . '`groups_user` gu ON u.id = gu.user_id
-				LEFT JOIN ' . TAB_PREF . '`groups` g ON gu.group_id = g.id
-				WHERE u.id = %1$u';
-		$this->query ( $sql, $user_id );
-		$user = array ();
+		$sql = "SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
+				FROM `users` u
+				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
+				LEFT JOIN `groups` g ON gu.group_id = g.id
+				WHERE u.id = $user_id";
+		$this->query ( $sql );
 		$user = $this->fetchOneRowA ();
 		return $user;
 	}
-	public function getGroupsO() {
-		$sql = 'SELECT * FROM ' . TAB_PREF . 'report_groups';
-		$this->query ( $sql );
-		$groups = array ();
-		while ( ($row = $this->fetchRowA ()) !== false ) {
-			$groups [] = $row;
-		}
-		return $groups;
-	}
+
 	
 	public function userList($order, $f_name, $f_tabno, $f_login, $f_group, $f_otdel, $id_group) {
 		
@@ -138,9 +118,9 @@ class adminModel extends module_model {
 		}
 		
 		$sql = 'SELECT u.id as user_id, u.*,g.id as group_id, g.name as group_name
-				FROM ' . TAB_PREF . '`users` u
-				LEFT JOIN ' . TAB_PREF . '`groups_user` gu ON u.id = gu.user_id
-				LEFT JOIN ' . TAB_PREF . '`groups` g ON gu.group_id = g.id
+				FROM `users` u
+				LEFT JOIN `groups_user` gu ON u.id = gu.user_id
+				LEFT JOIN `groups` g ON gu.group_id = g.id
 				WHERE u.isBan<2 ' . $fsql . $order_by;
 		$this->query ( $sql, $f_name, $f_tabno, $f_login, $f_group, $f_otdel );
 		$users = array ();
@@ -155,31 +135,28 @@ class adminModel extends module_model {
 		
 		$limStart = 0;
 		if ($page != 0) {
-			/*$count = $this->getOne ();
-			if ($page > $count)
-				$page = $count;*/
-			if ($page < 1)
-				$page = 1;
-			
-		//$col = 10;
-			if ($limCount < 1)
-				$limCount = 1;
+			if ($page < 1){
+                $page = 1;
+            }
+			if ($limCount < 1) {
+                $limCount = 1;
+            }
 			$limStart = ($page - 1) * $limCount;
-			if ($limStart < 0)
+			if ($limStart < 0){
 				$limStart = 0;
+			}
 		}
 		
 		$sql = 'SELECT 
-u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
-(SELECT COUNT(*) FROM ' . TAB_PREF . 'logins) as logscount 
-  FROM ' . TAB_PREF . 'logins lu
-  LEFT JOIN ' . TAB_PREF . 'users u ON lu.id_user = u.id
-  LEFT JOIN ' . TAB_PREF . 'groups_user gu ON u.id = gu.user_id
-  LEFT JOIN ' . TAB_PREF . 'groups g ON gu.group_id = g.id
-   LIMIT ' . $limStart . ', ' . ($limStart + $limCount) . '';
+                  u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
+                  (SELECT COUNT(*) FROM logins) as logscount 
+              FROM logins lu
+              LEFT JOIN users u ON lu.id_user = u.id
+              LEFT JOIN groups_user gu ON u.id = gu.user_id
+              LEFT JOIN groups g ON gu.group_id = g.id
+              LIMIT ' . $limStart . ', ' . ($limStart + $limCount) . ' ';
 		
 		$this->query ( $sql );
-		
 		$logins = array ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
 			$logins [] = $row;
@@ -188,21 +165,14 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	}
 	
 	public function userTest($login_n) {
-		$sql = 'SELECT count(id) FROM ' . TAB_PREF . '`users` u  WHERE u.login = \'%1$s\'';
+		$sql = 'SELECT count(id) FROM `users` u  WHERE u.login = \'%1$s\'';
 		$this->query ( $sql, $login_n );
 		$test = $this->getOne ();
 		return $test;
 	}
 	
-	/**
-	 * Обновить действия только для модуля
-	 * @param $rights
-	 * @return unknown_type
-	 */
-	public function groupRightModuleUpdate($rights, $group_id) {
-	
-	}
-	/**
+
+	/*
 	 *
 	 * @param $rights array ( mod_id = array( action_id => access));
 	 *
@@ -210,37 +180,19 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupRightUpdate($actions, $group_id) {
 		//foreach($rights as $mod => $action) {
 		foreach ( $actions as $action_id => $access ) {
-			if (DB_USE == 'MSSQL') {
-				$sql = 'begin tran
-						declare @aaa as int;
-						SET @aaa = (SELECT COUNT(*) FROM ' . TAB_PREF . 'module_access  WHERE group_id = %1$u AND action_id = %2$u)
-						if (@aaa = 0) begin
-							INSERT INTO ' . TAB_PREF . 'module_access  (group_id, action_id, access) VALUES (%1$u, %2$u, %3$u) 
-						end 
-							else 
-						begin
-							UPDATE ' . TAB_PREF . 'module_access SET access = %3$u WHERE group_id = %1$u AND action_id = %2$u	
-						end
-						commit tran';
-			}
-			
-			if (DB_USE == 'mySQL') {
-				$sql = 'INSERT INTO ' . TAB_PREF . '`module_access` (`group_id`, `action_id`, `access`) VALUES (%1$u, %2$u, %3$u) ON DUPLICATE KEY UPDATE `access` = %3$u';
-			}
-			if ($this->query ( $sql, $group_id, $action_id, $access ))
-				$this->Log->addToLog ( 'Задано действие', __LINE__, __METHOD__ );
-			else
-				$this->Log->addError ( array ('Ошибка задания действия', $action_id, $access ), __LINE__, __METHOD__ );
+            $sql = "INSERT INTO `module_access` (`group_id`, `action_id`, `access`) VALUES ($group_id, $action_id, $access) ON DUPLICATE KEY UPDATE `access` = $access";
+			if ($this->query ( $sql)) {
+                $this->Log->addToLog('Задано действие', __LINE__, __METHOD__);
+            }else {
+                $this->Log->addError(array('Ошибка задания действия', $action_id, $access), __LINE__, __METHOD__);
+            }
 		}
-		//}
 		return true;
 	}
-	public function groupReset($group_id, $module_id) {
-	
-	}
+
 	
 	public function groupAdd($group_name, $group_name, $parent = 0, $position = 100) {
-		$sql = 'INSERT INTO ' . TAB_PREF . '`groups` (`name`,`name`, `admin`, `parent`) VALUES (\'%1$s\' ,\'%2$s\' , 1, %3$u)';
+		$sql = 'INSERT INTO `groups` (`name`,`name`, `admin`, `parent`) VALUES (\'%1$s\' ,\'%2$s\' , 1, \'%3$u\')';
 		$this->query ( $sql, $group_name, $group_name, $parent );
 		$group_id = $this->insertID ();
 		
@@ -255,67 +207,35 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 	public function groupUpdate($group_name, $group_name, $group_id) {
 		if ($group_id == 0)
 			return false;
-		$sql = 'UPDATE ' . TAB_PREF . 'groups SET name = \'%1$s\', name = \'%2$s\' WHERE id = %3$u';
+		$sql = 'UPDATE groups SET name = \'%1$s\', name = \'%2$s\' WHERE id = \'%3$u\' ';
 		return $this->query ( $sql, $group_name, $group_name, $group_id );
 	}
 	
 	public function getActions($group_id) {
-		$sql = 'SELECT ma.*,
+		$sql = "SELECT ma.*,
                 m.name as mod_name,
                 mc.access as mcaccess,
                 mc.group_id,
                 ug.user_id,
                 g.name as gname,
                 g.name as gname,
-                u.name as uname,';
-		
-		//         $sql.= '       IF (mc.group_id IS NOT NULL, mc.group_id, 0) as group_adm';
-		/*
-		$sql.= 'mc.group_id as group_adm
-            FROM '.TAB_PREF.'module_actions ma
-            INNER JOIN '.TAB_PREF.'modules m ON  ma.mod_id = m.id
-            LEFT JOIN ('.TAB_PREF.'module_access mc
-            INNER JOIN '.TAB_PREF.'groups_user ug ON mc.group_id = ug.group_id
-            INNER JOIN '.TAB_PREF.'groups g ON ug.group_id = g.id AND ug.group_id = %1$u
-            INNER JOIN '.TAB_PREF.'users u ON ug.user_id = u.id) ON ma.id = mc.action_id
-         
-            order by m.id';
-		*/
-		
-		$sql .= 'mc.group_id as group_adm
-            FROM ' . TAB_PREF . 'module_actions ma
-            INNER JOIN ' . TAB_PREF . 'modules m ON  ma.mod_id = m.id
-            LEFT JOIN ' . TAB_PREF . 'module_access mc ON ma.id = mc.action_id AND mc.group_id = %1$u
-            LEFT JOIN ' . TAB_PREF . 'groups_user ug ON mc.group_id = ug.group_id
-            LEFT JOIN ' . TAB_PREF . 'groups g ON ug.group_id = g.id 
-            LEFT JOIN ' . TAB_PREF . 'users u ON ug.user_id = u.id 
-          /*  group by ma.id*/
-            order by m.id';
-		
-		if (isset ( $_SESSION ['authorization_LDAP'] )) {
-			if ($_SESSION ['authorization_LDAP'] == 1) {
-				$sql = 'SELECT ma.*,
-                m.name as mod_name,
-                mc.access as mcaccess,
-                mc.group_id ,       
+                u.name as uname,
                 mc.group_id as group_adm
-            FROM ' . TAB_PREF . 'module_actions ma            
-            INNER JOIN ' . TAB_PREF . 'module_access mc ON ma.id = mc.action_id AND mc.group_id  = 10
-            INNER JOIN ' . TAB_PREF . 'modules m ON  ma.mod_id = m.id';
-			}
-		}
+            FROM module_actions ma
+            INNER JOIN modules m ON  ma.mod_id = m.id
+            LEFT JOIN module_access mc ON ma.id = mc.action_id AND mc.group_id = $group_id
+            LEFT JOIN groups_user ug ON mc.group_id = ug.group_id
+            LEFT JOIN groups g ON ug.group_id = g.id 
+            LEFT JOIN users u ON ug.user_id = u.id 
+            order by m.id";
+
 		
-		$this->query ( $sql, $group_id );
-		//stop($this->sql);
-		$coll = array ();
+		$this->query ( $sql );
 		$lastID = 0;
-		$lastGR = '';
 		$actionColl = new actionColl ();
 		while ( ($row = $this->fetchRowA ()) !== false ) {
-			#stop($row);
+            $groupColl = new mcColl ();
 			if ($lastID != $row ['id']) {
-				$groupColl = new mcColl ();
-				
 				$Params = array ();
 				$Params ['id'] = $row ['id'];
 				$Params ['mod_id'] = $row ['mod_id'];
@@ -347,34 +267,16 @@ u.name,lu.ip,lu.date,lu.referer,lu.browser,lu.os,g.name as group_name,
 		return $actionColl;
 	}
 	public function getGroupName_ru($group_id) {
-		$sql = 'SELECT name FROM ' . TAB_PREF . 'groups WHERE id = %1$u';
-		$this->query ( $sql, $group_id );
-		return $this->getOne ();
-	}
-	public function getGroupName_en($group_id) {
-		$sql = 'SELECT name FROM ' . TAB_PREF . 'groups WHERE id = %1$u';
-		$this->query ( $sql, $group_id );
+		$sql = "SELECT name FROM groups WHERE id = $group_id";
+		$this->query ( $sql );
 		return $this->getOne ();
 	}
 	
-	public function gelLogs($type) {
-		$logs = array ();
-		if ($type == 'few') {
-			$sql = 'SELECT s.*, CONVERT (char(10), s.`date`, 105) as date, u.name as username
-					FROM ' . TAB_PREF . '`sys_log` s
-					INNER JOIN ' . TAB_PREF . '`users` u ON s.user_id = u.id
-					ORDER BY s.`date` DESC';
-			$this->query ( $sql );
-			while ( ($row = $this->fetchOneRowA ()) !== false ) {
-				$logs [] = $row;
-			}
-		}
-		return $logs;
-	}
+
 }
 
 class adminProcess extends module_process {
-	private $updated;
+    public $updated;
 	protected $nModel;
 	protected $nView;
 	
@@ -441,7 +343,6 @@ class adminProcess extends module_process {
 		
 		if ($_action)
 			$this->action = $_action;
-		$action = $this->actionDefault;
 		if ($this->action)
 			$action = $this->action;
 		else
@@ -459,11 +360,8 @@ class adminProcess extends module_process {
 			$this->nView->viewLogin ( $p, $user_id );
 			$this->Log->addError ( $p, __LINE__, __METHOD__ );
 			$this->updated = true;
-			return;
+			return true;
 		} else {
-			$p = array ('Система администрирования' );
-			//$this->nView->viewLogin($p, $user_id);
-			//$this->Log->addError($p, __LINE__, __METHOD__);
 			$this->updated = false;
 		}
 		
@@ -511,9 +409,9 @@ class adminProcess extends module_process {
 		
 		/* * Пользователи * */
 		if ($user_right == 0 && $user_id == 0 && ! $_action) {
-			$this->nView->viewLogin ( 'SkyLC', '', $user_id, array (), array () );
+			$this->nView->viewLogin ( 'SkyLC', '', $user_id );
 			$this->updated = true;
-			return;
+			return true;
 		}
 		
 		if ($user_id > 0 && ! $_action) {
@@ -556,24 +454,16 @@ class adminProcess extends module_process {
 					if ($res > 0) {
 						//					$this->System->actionLog($this->mod_id, $res, 'Добавлен новый пользователь: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
 						$this->nView->viewMessage ( 'Добавлен новый пользователь', 'Сообщение' );
-						$message1 = ' Вы были зарегистрированны в системе "Интранет портал РИВЦ-Пулково"<br />' . rn . rn;
-						$message2 = ' Добавлен новый пользователь<br />' . rn . rn;
 						$usInfo = '';
 						foreach ( $Params as $key => $val ) {
 							$usInfo .= $key . ' : ' . $val . '<br />' . rn;
 						}
-						$message1 .= $usInfo;
-						$message2 .= $usInfo;
-					
-		//$message = join('<br />'.rn,$Params);
-					// sendMail('Регистрация в системе', $message1, $Params['email'],'Интранет портал РИВЦ-Пулково');
-					// sendMail('Новый пользователь', $message2, 'poltavcev@rivc-pulkovo.ru','Интранет портал РИВЦ-Пулково');
 					} else {
 						$this->nView->viewError ( array ('Ошибка добавления пользователя' ) );
 					}
 				} else {
 					$this->nView->viewError ( array ('Заполнены не все обязательные поля! ', $Params ['username'], $Params ['email'], $Params ['group_id'] ) );
-					return;
+					return true;
 				}
 				$action = 'userList';
 			
@@ -592,14 +482,10 @@ class adminProcess extends module_process {
 				$res = $this->nModel->groupHide ( $Params ['group_id'] );
 				if ($res) {
 					$this->nView->viewMessage ( 'Группа перемещена в корзину', 'Сообщение' );
-					$message1 = ' Группа удалена "SkyLC"<br />' . rn . rn;
-					$message2 = ' Группа успешно удалена<br />' . rn . rn;
 					$usInfo = '';
 					foreach ( $Params as $key => $val ) {
 						$usInfo .= $key . ' : ' . $val . '<br />' . rn;
 					}
-					$message1 .= $usInfo;
-					$message2 .= $usInfo;
 				} else {
 					$this->nView->viewError ( array ('Ошибка удаления группы' ) );
 				}
@@ -613,14 +499,10 @@ class adminProcess extends module_process {
 			$res = $this->nModel->userBan ( $Params ['user_id'], $Params ['full'] );
 			if ($res) {
 				$this->nView->viewMessage ( 'Пользователь перемещен в корзину', 'Сообщение' );
-				$message1 = ' Ваш профиль удален "SkyLC"<br />' . rn . rn;
-				$message2 = ' Пользователь успешно удален<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {
 					$usInfo .= $key . ' : ' . $val . '<br />' . rn;
 				}
-				$message1 .= $usInfo;
-				$message2 .= $usInfo;
 			} else {
 				$this->nView->viewError ( array ('Ошибка удаления пользователя' ) );
 			}
@@ -632,14 +514,10 @@ class adminProcess extends module_process {
 			$res = $this->nModel->userUnBan ( $Params ['user_id'] );
 			if ($res) {
 				$this->nView->viewMessage ( 'Пользователь восстановлен из корзины', 'Сообщение' );
-				$message1 = ' Ваш профиль восстановлен "SkyLC"<br />' . rn . rn;
-				$message2 = ' Пользователь успешно восстановлен<br />' . rn . rn;
 				$usInfo = '';
 				foreach ( $Params as $key => $val ) {
 					$usInfo .= $key . ' : ' . $val . '<br />' . rn;
 				}
-				$message1 .= $usInfo;
-				$message2 .= $usInfo;
 			} else {
 				$this->nView->viewError ( array ('Ошибка восстановления пользователя' ) );
 			}
@@ -671,26 +549,17 @@ class adminProcess extends module_process {
 			if ($Params ['username'] != '' && $Params ['email'] != '' && $Params ['group_id'] > 0) {
 				$res = $this->nModel->userUpdate ( $Params ['username'], $Params ['email'], $Params ['login'],$Params ['tab_no'], $Params ['pass'], $Params ['ip'], $Params ['group_id'], $Params ['isBan'], $Params ['user_id'] );
 				if ($res) {
-					//					$this->System->actionLog($this->mod_id, $Params['user_id'], 'Пользователь обновлен: '.$Params['username'], dateToDATETIME (date('Y-d-m h-i-s')), $this->User->getUserID(), 1, $action);
 					$this->nView->viewMessage ( 'Пользователь успешно обновлен', 'Сообщение' );
-					$message1 = ' Ваш профиль обновлен "SkyLC"<br />' . rn . rn;
-					$message2 = ' Пользователь успешно обновлен<br />' . rn . rn;
 					$usInfo = '';
 					foreach ( $Params as $key => $val ) {
 						$usInfo .= $key . ' : ' . $val . '<br />' . rn;
 					}
-					$message1 .= $usInfo;
-					$message2 .= $usInfo;
-				
-		//$message = join('<br />'.rn,$Params);
-				//sendMail('Профиль обновлен', $message1, $Params['email'],'Интранет портал РИВЦ-Пулково');
-				//sendMail('Пользователь обновлен', $message2, 'poltavcev@rivc-pulkovo.ru','Интранет портал РИВЦ-Пулково');
 				} else {
 					$this->nView->viewError ( array ('Ошибка обновления пользователя' ) );
 				}
 			} else {
 				$this->nView->viewError ( array ('Заполнены не все обязательные поля', $Params ['username'], $Params ['email'], $Params ['group_id'] ) );
-				return;
+				return true;
 			}
 			$action = 'userList';
 			$this->updated = true;
@@ -701,11 +570,9 @@ class adminProcess extends module_process {
 			if ($user_id > 0) {
 				$user = $this->nModel->userGet ( $user_id );
 				$groups = $this->nModel->getGroups ();
-				$groups_o = $this->nModel->getGroupsO ();
-				$user_rights = $this->nModel->user_rights ( $user_id );
 				
 				if ($user ['user_id'] > 0)
-					$this->nView->viewUserEdit ( $user, $groups, $groups_o, $user_rights );
+					$this->nView->viewUserEdit ( $user, $groups );
 				else
 					$this->nView->viewError ( 'Пользователь не найден' );
 			} else {
@@ -739,9 +606,8 @@ class adminProcess extends module_process {
 		
 		if ($action == 'groupAdd') {
 			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
-			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
 			if ($group_name != '')
-				$group_id = $this->nModel->groupAdd ( $group_name, $group_name );
+				$this->nModel->groupAdd ( $group_name, $group_name );
 			else
 				$this->nView->viewError ( array ('Укажите название группы (rus)' ) );
 			$action = 'groupList';
@@ -750,13 +616,11 @@ class adminProcess extends module_process {
 		if ($action == 'groupEdit') {
 			$group_id = $this->Vals->getVal ( 'groupEdit', 'GET', 'integer' );
 			$group_name = $this->nModel->getGroupName_ru ( $group_id );
-			$group_name = $this->nModel->getGroupName_en ( $group_id );
 			$this->nView->viewEditGroup ( $group_name, $group_name, $group_id );
 			$this->updated = true;
 		}
 		if ($action == 'groupUpdate') {
 			$group_id = $this->Vals->getVal ( 'group_id', 'POST', 'integer' );
-			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
 			$group_name = $this->Vals->getVal ( 'name', 'POST', 'string' );
 			if (! $this->nModel->groupUpdate ( $group_name, $group_name, $group_id ))
 				$this->nView->viewError ( array ('Ошибка обновления группы' ) );
@@ -782,7 +646,6 @@ class adminProcess extends module_process {
 		}
 		
 		if ($action == 'groupList') {
-			
 			$groups = $this->nModel->getGroups ();
 			$this->nView->viewGroups ( $groups );
 			$this->updated = true;
@@ -792,7 +655,7 @@ class adminProcess extends module_process {
 			
 			$limCount = $this->vals->getVal ( 'count', 'get', 'integer' );
 			if (! $limCount)
-				$limCount = $this->vals->getModuleVal ( $this->modName, 'count', 'GET', 'integer' );
+				$limCount = $this->vals->getModuleVal ( $this->modName, 'count', 'GET' );
 			$page = $this->vals->getVal ( 'page', 'GET', 'integer' );
 			if ($page <= 0 || $page === NULL) {
 				$this->Vals->setValTo ( 'page', '1', 'GET' );
@@ -821,18 +684,10 @@ class adminProcess extends module_process {
 			$group_id = $this->Vals->getVal ( 'groupRightsAdmin', 'GET', 'integer' );
 			$actions = $this->nModel->getActions ( $group_id );
 			$group_name = $this->nModel->getGroupName_ru ( $group_id );
-			$group_name = $this->nModel->getGroupName_en ( $group_id );
 			$this->nView->viewGroupRightAdmin ( $actions, $group_name, $group_name, $group_id );
 			$this->updated = true;
 		}
 		/* * Конец Группы * */
-		
-		if ($action == 'logs') {
-			$type = 'few';
-			$logs = $this->nModel->gelLogs ( $type );
-			$this->nView->viewLogs ( $logs, $type );
-			$this->updated = true;
-		}
 		
 		if ($this->Vals->isVal ( 'ajax', 'INDEX' )) {
 			if ($this->Vals->isVal ( 'xls', 'INDEX' )) {
@@ -858,7 +713,7 @@ class adminProcess extends module_process {
 			$this->nView->viewMainPage ();
 			$this->updated = true;
 		}
-	
+	    return true;
 	}
 	
 	function generatePass($length = 6) {
@@ -895,12 +750,7 @@ class adminView extends module_view {
 		}
 		return true;
 	}
-	/**
-	 *
-	 *
-	 * @param $users array()
-	 * @return unknown_type
-	 */
+
 	public function viewUserList($users, $order, $isAjax, $id_group, $groups) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/user.list.xsl';
 		if ($isAjax == 1) {
@@ -923,11 +773,11 @@ class adminView extends module_view {
 	
 	public function viewMainPage() {
 		$this->pXSL [] = RIVC_ROOT . 'layout/admin/admin.main.xsl';
-		$Container = $this->newContainer ( 'adminmain' );
+		$this->newContainer ( 'adminmain' );
 		return true;
 	}
 	
-	public function viewUserEdit($user, $groups, $groups_o, $user_rights) {
+	public function viewUserEdit($user, $groups) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/user.edit.xsl';
 		$Container = $this->newContainer ( 'useredit' );
 		$this->arrToXML ( $user, $Container, 'user' );
@@ -935,16 +785,6 @@ class adminView extends module_view {
 		foreach ( $groups as $item ) {
 			$this->arrToXML ( $item, $ContainerGroups, 'item' );
 		}
-		$ContainerGroupsO = $this->addToNode ( $Container, 'groupsO', '' );
-		foreach ( $groups_o as $item ) {
-			$this->arrToXML ( $item, $ContainerGroupsO, 'item' );
-		}
-		$ContainerRights = $this->addToNode ( $Container, 'user_rights', '' );
-		foreach ( $user_rights as $item ) {
-			$this->arrToXML ( $item, $ContainerRights, 'item' );
-		}
-		$ContainerAirs = $this->addToNode ( $Container, 'airports', '' );
-		
 		return true;
 	}
 	
@@ -960,7 +800,7 @@ class adminView extends module_view {
 	
 	public function viewNewGroup() {
 		$this->pXSL [] = RIVC_ROOT . 'layout/users/group.new.xsl';
-		$Container = $this->newContainer ( 'groupnew' );
+		$this->newContainer ( 'groupnew' );
 		return true;
 	}
 	
@@ -992,12 +832,14 @@ class adminView extends module_view {
 				$lastMod = $action->mod_id;
 			}
 			$aArray = $action->toArray ();
-			$actElememt = $this->arrToXML ( $aArray, $modElememt, 'action' );
-			if ($action->groups->count () > 0) {
-				$this->addToNode ( $actElememt, 'inGroup', $action->groups->count () );
-			} else {
-				$this->addToNode ( $actElememt, 'inGroup', 0 );
-			}
+			if (isset($modElememt)) {
+                $actElememt = $this->arrToXML($aArray, $modElememt, 'action');
+                if ($action->groups->count () > 0) {
+                    $this->addToNode ( $actElememt, 'inGroup', $action->groups->count () );
+                } else {
+                    $this->addToNode ( $actElememt, 'inGroup', 0 );
+                }
+            }
 		
 		//stop($action->groups->count(), 0);
 		}
@@ -1023,14 +865,14 @@ class adminView extends module_view {
 				$lastMod = $action->mod_id;
 			}
 			$aArray = $action->toArray ();
-			$actElememt = $this->arrToXML ( $aArray, $modElememt, 'action' );
-			if ($action->groups->count () > 0) {
-				$this->addToNode ( $actElememt, 'inGroup', $action->groups->count () );
-			} else {
-				$this->addToNode ( $actElememt, 'inGroup', 0 );
-			}
-		
-		//stop($action->groups->count(), 0);
+            if (isset($modElememt)) {
+                $actElememt = $this->arrToXML($aArray, $modElememt, 'action');
+                if ($action->groups->count () > 0) {
+                    $this->addToNode ( $actElememt, 'inGroup', $action->groups->count () );
+                } else {
+                    $this->addToNode ( $actElememt, 'inGroup', 0 );
+                }
+            }
 		}
 		return true;
 	}
@@ -1042,8 +884,9 @@ class adminView extends module_view {
 		$this->addAttr ( 'count', $Archive->count, $Container );
 		$this->addAttr ( 'size', $Archive->size, $Container );
 		$this->addAttr ( 'curPage', $Archive->curPage, $Container );
-		foreach ( $logins as $aArray )
-			$actElememt = $this->arrToXML ( $aArray, $Container, 'item' );
+		foreach ( $logins as $aArray ) {
+            $this->arrToXML($aArray, $Container, 'item');
+        }
 		return true;
 	}
 	
@@ -1052,12 +895,11 @@ class adminView extends module_view {
 		$Container = $this->newContainer ( 'logsfew' );
 		
 		if ($type == 'few') {
-			foreach ( $logs as $aArray )
-				$actElememt = $this->arrToXML ( $aArray, $Container, 'item' );
+			foreach ( $logs as $aArray ) {
+                $this->arrToXML($aArray, $Container, 'item');
+            }
 		}
 		return true;
 	}
 
 }
-
-?>

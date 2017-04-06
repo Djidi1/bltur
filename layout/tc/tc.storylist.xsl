@@ -25,6 +25,7 @@
 									<th>Страна</th>
 									<th>Название</th>
 									<th></th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -35,14 +36,17 @@
 										<td><xsl:value-of select="name"/></td>
 										<td>
 										<a href="#" title="Описание тура" class="btn btn-info fire{fire}" onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;" style="max-width:340px;text-align:left;white-space:normal;">
-												<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+												<span class="glyphicon glyphicon-eye-open" />
 											</a>
 											<div class="overview" style="display:none;">
-												<a href="#" onclick="printBlock('print_data_{position()}')" class="btn btn-info glyphicon glyphicon-print" style="width: initial;float: right;"></a>
+												<a href="#" onclick="printBlock('print_data_{position()}')" class="btn btn-info glyphicon glyphicon-print" style="width: initial;float: right;"/>
 												<div id="print_data_{position()}" class="printBlock">
 													<xsl:value-of select="overview" disable-output-escaping="yes"/>
 												</div>
 											</div>
+										</td>
+										<td>
+											<a href="/tc/viewStoryList-1/edit-{id}" class="btn btn-success" target="_blank"><span class="glyphicon glyphicon-pencil" /></a>
 										</td>
 									</tr>
 								</xsl:for-each>

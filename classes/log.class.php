@@ -13,8 +13,8 @@ function stop ($msg, $exit = 1) {
 		header('Content-Type: text/html; charset=UTF-8;');
 	}
   if (is_array($msg) || is_object($msg)) {
-    echo '<hr /><p style="color: #FF0000">'.br;
-    if ( get_class($msg) == 'DOMDocument') {
+    echo '<hr /><pre style="color: #FF0000">'.br;
+    if ( @get_class($msg) == 'DOMDocument') {
       $xml = new DOMDocument('1.0');
       $xml->formatOutput = true;
       $xml->preserveWhiteSpace = false;
@@ -28,7 +28,7 @@ function stop ($msg, $exit = 1) {
     }
     #$msg = iconv('windows-1251','utf-8', $msg);
     print_r ($msg);
-    echo '</p><hr />'.br;
+    echo '</pre><hr />'.br;
   } else {
     echo '<hr /><pre style="color: #FF0000">'.br;
     echo gettype($msg).':'.br;
@@ -86,7 +86,7 @@ class TLog {
     $this->messages = array();
     $this->timeStart = $this->getMicroTime();
     $this->checkPoint = 0;
-    $this->addSysMSG('System Start: '.date('d.m.Y h:i').' '.$this->timeStart, __LINE__, __METHOD__, __CLASS__ );
+    $this->addSysMSG('System Start: '.date('d.m.Y h:i').' '.$this->timeStart, __METHOD__ );
     #$this->addToLog('Log create: '.date('d.m.Y h:i'), __LINE__, __METHOD__, __CLASS__ );
   }
 
@@ -96,7 +96,7 @@ class TLog {
   }
 
   public function addToLog ($msg, $line = '', $method = '', $class = '') {
-    $msg = array('m', $msg, $line, $method);
+    $msg = array('m', $msg, $line, $method,$class);
     #$this->_log[] = 'm: '.' '.$method.' '.$line.' '.bn.$this->addText($msg);
     $this->_log[] = $msg;
   }

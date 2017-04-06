@@ -1,25 +1,26 @@
 <?php
 class mySQL {
-	private $host;
-	private $db_name;
-	private $db_user;
-	private $db_pass;
+//	private $host;
+//	private $db_name;
+//	private $db_user;
+//	private $db_pass;
 	public $connect;
 	public $result;
+	public $error;
 	public $sql;
 	public $debug_prefix;
 
 	public function __construct($debug_prefix = 'all') {
 		if (DB_USE != 'mySQL') return;
 		$this->debug_prefix = $debug_prefix;
-		if(!defined('MYSQL_CONNECTION')) {
-			$this->connect = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-			if (!$this->connect) { die ('Failed to connect to the server'.br.mysql_error()); }
-			mysql_query ("SET NAMES UTF8");
-			mysql_select_db(DB_DATABASE,$this->connect);
-			if (mysql_errno() != 0) { die ('Failed to select_db'.br.mysql_error()); }
-			define('MYSQL_CONNECTION', $this->connect);
-		} else $this->connect = MYSQL_CONNECTION;
+//		if(!defined('MYSQL_CONNECTION')) {
+			$this->connect = mysqli_connect(DB_HOST, DB_USER, DB_PASS);
+			if (!$this->connect) { die ('Failed to connect to the server'.br.mysqli_error($this->connect)); }
+			mysqli_query ($this->connect,"SET NAMES UTF8");
+			mysqli_select_db($this->connect,DB_DATABASE);
+			if (mysqli_errno($this->connect) != 0) { die ('Failed to select_db'.br.mysqli_error($this->connect)); }
+//			define('MYSQL_CONNECTION', $this->connect);
+//		} else $this->connect = MYSQL_CONNECTION;
 	}
 
 	public function query() {
@@ -32,6 +33,7 @@ class mySQL {
 			fwrite($fp, $this->debug_prefix.': '.$SQL_COUNTER.rn);
 
 		}
+		$args = array();
 		if (func_num_args() > 1) $args = func_get_args();
 		if (func_num_args() == 1) $args = func_get_arg(0);
 		# $args = func_get_args();
@@ -40,7 +42,7 @@ class mySQL {
 				if ($key == 0) continue;
 				if (gettype ($arg) == 'array' ) { stop($args[0], 0); stop($arg); }
 				$LOG->addToLog(array('arg'=>$arg), __LINE__, __METHOD__);
-				$arg = mysql_real_escape_string($arg, $this->connect);
+				$arg = mysqli_real_escape_string($this->connect, $arg);
 			}
 		}
 		if (is_array($args))
@@ -48,7 +50,7 @@ class mySQL {
 		else
 			$this->sql = call_user_func('sprintf', $args);
 		if (DEBUG == 1) {
-			$a = array();
+//			$a = array();
 			$a = $args;
 			$a0 = $args[0];
 			$a = arrayTOhtmlspecialchars($a);
@@ -59,41 +61,48 @@ class mySQL {
 				$sqlLog = call_user_func('sprintf',$a);
 		}
 		if ($this->sql == '') {
-
-			$LOG->addError(array('Пустой запрос')+$arg, __LINE__, __Method__);
+			$LOG->addError('Пустой запрос', __LINE__, __Method__);
 		}
 
-		$this->result = @mysql_query($this->sql, $this->connect);
-		if (mysql_errno($this->connect) != 0) {
-			$LOG->addError(array('Ошибка MySQL', mysql_errno($this->connect) => mysql_error() ),__LINE__,__METHOD__);
+		$this->result = mysqli_query($this->connect, $this->sql);
+        $this->error = mysqli_error($this->connect);
+
+		if (mysqli_errno($this->connect) != 0) {
+			$LOG->addError(array('Ошибка MySQL', mysqli_errno($this->connect) => mysqli_error($this->connect) ),__LINE__,__METHOD__);
 		}
 		$LOG->addToLogSQL(array('SQL' => $sqlLog));
-		if (mysql_errno() != 0) {
-			$LOG->addError(array('Запрос не выполнен',mysql_error(),$this->sql), __LINE__, __Method__);
+		if (mysqli_errno($this->connect) != 0) {
+			$LOG->addError(array('Запрос не выполнен',mysqli_error($this->connect),$this->sql), __LINE__, __Method__);
 		}		
-		if (DEBUG == 1) {   fclose($fp); }
+		if (DEBUG == 1) {
+            if (isset($fp)) {
+                fclose($fp);
+            }
+        }
 		return $this->result;
 	}
 
 	public function fetchRow() {
 		global $LOG;
 
-		if(!is_resource($this->result)) #die ('Отсутствет результат запроса'.br.mysql_error().$this->sql);
+		if(!($this->result)) #die ('Отсутствет результат запроса'.br.mysql_error().$this->sql);
 		{
 			$LOG->addToLog(array('sql:'=>$this->sql, 'err'=>'fetchRow Отсутствет результат запроса', 'type'=>gettype($this->result)), __LINE__, __METHOD__);
 			return false;
 		}
-		return mysql_fetch_row($this->result);
+        $return =  mysqli_fetch_row($this->result);
+        return ($return == null)?false:$return;
 	}
 	public function fetchRowA() {
 		global $LOG;
 
-		if(!is_resource($this->result)) #die ('Отсутствет результат запроса'.br.mysql_error().$this->sql);
+		if(!($this->result)) #die ('Отсутствет результат запроса'.br.mysql_error().$this->sql);
 		{
 			$LOG->addToLog(array('sql:'=>$this->sql, 'err'=>'fetchRowA Отсутствет результат запроса', 'type'=>gettype($this->result)), __LINE__, __METHOD__);
 			return false;
 		}
-		return mysql_fetch_assoc($this->result);
+        $return =  mysqli_fetch_assoc($this->result);
+		return ($return == null)?false:$return;
 	}
 	/** * возвращает первый (нулевой) элемент из строки запроса */
 	public function getOne() {
@@ -101,8 +110,8 @@ class mySQL {
 			$args = func_get_args();
 			$this->query($args);
 		}
-		if(!is_resource($this->result)) die ('getOne Отсутствет результат запроса'.br.mysql_error());
-		$row = mysql_fetch_row($this->result);
+		if(!($this->result)) die ('getOne Отсутствет результат запроса'.br.mysqli_error($this->connect));
+		$row = mysqli_fetch_row($this->result);
 		return $row[0];
 	}
 
@@ -112,8 +121,9 @@ class mySQL {
 			$args = func_get_args();
 			$this->result = call_user_func_array($this.'->query', $args);
 		}
-		if(!is_resource($this->result)) die ('fetchOneRow Отсутствет результат запроса'.br.mysql_error());
-		return mysql_fetch_row($this->result);
+		if(!($this->result)) die ('fetchOneRow Отсутствет результат запроса'.br.mysqli_error($this->connect));
+        $return =  mysqli_fetch_row($this->result);
+        return ($return == null)?false:$return;
 	}
 
 	/** возвращает первую строку по запросу */
@@ -122,24 +132,22 @@ class mySQL {
 			$args = func_get_args();
 			$this->result = call_user_func_array($this.'->query', $args);
 		}
-		if(!is_resource($this->result)) { debug_print_backtrace(); die ('fetchOneRowA Отсутствет результат запроса'.br.mysql_error().br.$this->sql);}
-		return mysql_fetch_assoc($this->result);
+		if(!($this->result)) { debug_print_backtrace(); die ('fetchOneRowA Отсутствет результат запроса'.br.mysqli_error($this->connect).br.$this->sql);}
+        $return =  mysqli_fetch_assoc($this->result);
+        return ($return == null)?false:$return;
 	}
 
 	public function numRows() {
-		if(is_resource($this->result)) return mysql_num_rows($this->result);
+		if(($this->result)) return mysqli_num_rows($this->result);
 		return 0;
 	}
 
 	public function affectedRows() {
-		$affectedRows = mysql_affected_rows();
+		$affectedRows = mysqli_affected_rows($this->connect);
 		return $affectedRows;
 	}
 
 	public function insertID() {
-		return mysql_insert_id();
+		return mysqli_insert_id($this->connect);
 	}
 }
-
-
-?>

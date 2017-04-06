@@ -19,7 +19,7 @@ class fileItem extends module_item {
   public $isImage;
 
   public function __construct ($Params, $prefix = '') {
-    global $LOG;
+//    global $LOG;
     parent::__construct();
     if (isset($Params[$prefix.'id'])) $this->id = $Params[$prefix.'id']; else $this->id = 0;
     if (isset($Params[$prefix.'filename'])) $this->filename = $Params[$prefix.'filename']; else $this->filename = '';
@@ -172,19 +172,19 @@ class fileModel extends module_model {
 
     public function update($module, $essence_module) {
       global $vals;
-      $files = $this->getModule($module, $essence_module);
+//      $files = $this->getModule($module, $essence_module);
       foreach ($_FILES as $fname => $uFile) {
         $fpost = $vals->getVal($fname, 'POST', 'integer');
         if ($fpost > 0) {
-          $r1 = $this->del($item, $essence_module);
-          $r2 = $this->unlink($item);
-          if ($res1 && $res2) $this->addToLog('Файл ['.$item->module.']::['.$item->filename.'] удален', __LINE__, __METHOD__);
-          else $this->addError(array('Ошибка удаления файла ',$item->filename, $item->module, $item->id, $essence_module), __LINE__, __METHOD__);
+          $r1 = $this->del($fpost, $essence_module);
+          $r2 = $this->unlink($fpost);
+          if ($r1 && $r2) $this->addToLog('Файл ['.$module.']::['.$fpost.'] удален', __LINE__, __METHOD__);
+          else $this->addError(array('Ошибка удаления файла ',$fpost, $module, '', $essence_module), __LINE__, __METHOD__);
         } else {
-          $r1 = $this->add($item);
-          $r2 = $this->upload ($item, $uFile['tmp_name']);
-          if ($res1 && $res2) $this->addToLog('Файл ['.$item->module.']::['.$item->filename.'] загружен', __LINE__, __METHOD__);
-          else $this->addError(array('Ошибка загрузки файла ',$item->filename, $item->module, $item->id, $essence_module), __LINE__, __METHOD__);
+          $r1 = $this->add($fpost);
+          $r2 = $this->upload ($fpost, $uFile['tmp_name']);
+          if ($r1 && $r2) $this->addToLog('Файл ['.$module.']::['.$fpost.'] загружен', __LINE__, __METHOD__);
+          else $this->addError(array('Ошибка загрузки файла ',$fpost, $module, $item->id, $essence_module), __LINE__, __METHOD__);
         }
       }
       return true;
@@ -218,7 +218,7 @@ class fileModel extends module_model {
       return false;
 
     }
-	/**
+	/*
 	 * 
 	 * @param $moduleAssign
 	 * @param $essence_module (id in moduleAssign)
@@ -265,14 +265,8 @@ class fileModel extends module_model {
       }
       return $collect ;
     }
-    
-    /**
-     * 
-     */
-    public function getModuleList ($modName, $essenes = array()) {
-    	
-    }
-/**
+
+/*
  * 
  * @param fileItem $item
  * @param $essence_module ID записи
@@ -289,14 +283,14 @@ class fileModel extends module_model {
     }
 */
     
-    /**
+    /*
      * 
      * @param fileItem $item
      * @param $essence_module
      * @return $res2 & $res1
      */
     public function delFile (fileItem $item, $essence_module) {
-    	if (!$item->id) {$this->Log->addError('Невозможно удалить файл, ID = 0'); return false;}
+    	if (!$item->id) {$this->Log->addError('Невозможно удалить файл, ID = 0','',''); return false;}
       $sql = 'DELETE FROM `files` WHERE id=%1$u';
       $res1 = $this->query($sql, $item->id);
       $sql = 'DELETE FROM `files_modules` WHERE `module` = \'%1$s\' AND essence_module = %2$u AND essence_id = %3$u';
@@ -316,7 +310,7 @@ class fileModel extends module_model {
     	if (!is_file(DIR_UPLOAD.$item->folder.'/'.$item->codename) && DEBUG == 1) {
     		$fp = fopen('debug/unlink.txt','a');
     		
-      		$str = '['.date('d:m:Y H:i:s').'] Ошибка файл: '.DIR_UPLOAD.'\\'.join(', ',$item->toArray()).rn;
+      		$str = '['.date('d:m:Y H:i:s').'] Ошибка файл: '.DIR_UPLOAD.'\\'.join(', ',(array)$item).rn;
     		fwrite($fp,$str);
     		fclose($fp);
     		return false;
@@ -324,9 +318,9 @@ class fileModel extends module_model {
        $res3 = @unlink(DIR_UPLOAD.$item->folder.'/'.$item->codename);
        $fp = fopen('logs/unlink.txt','a');
        if ($res3) {          		
-       	$str = 'ok ['.date('d:m:Y H:i:s').'] Удален файл: '.DIR_UPLOAD.'\\'.join(', ',$item->toArray()).rn;       
+       	$str = 'ok ['.date('d:m:Y H:i:s').'] Удален файл: '.DIR_UPLOAD.'\\'.join(', ',(array)$item).rn;
        } else {
-       	$str = 'er ['.date('d:m:Y H:i:s').'] Ошибка удаления файла: '.DIR_UPLOAD.'\\'.join(', ',$item->toArray()).rn;
+       	$str = 'er ['.date('d:m:Y H:i:s').'] Ошибка удаления файла: '.DIR_UPLOAD.'\\'.join(', ',(array)$item).rn;
        }
        fwrite($fp,$str);
        fclose($fp);
@@ -338,13 +332,13 @@ class fileModel extends module_model {
 
     }
 
-    /**
+    /*
     *   upload - используется в добавлении файла
     */
     public function upload(fileItem $item, $tmp_name) {
       if (is_uploaded_file ($tmp_name) ) {
         if (!is_dir(DIR_UPLOAD.$item->folder)) mkdir(DIR_UPLOAD.$item->folder, 0777, true);
-        $ext = explode('.',basename($item->filename));
+//        $ext = explode('.',basename($item->filename));
         #$item->setVal('codename', $item->getVal('codename').'.'.$ext[1]);
         if(copy($tmp_name, DIR_UPLOAD.$item->folder.'/'.$item->codename)) {
 #          $item->setVal('mime', mime_content_type(DIR_UPLOAD.$item->getVal('folder').'/'.$item->getVal('codename')));
@@ -395,7 +389,7 @@ class fileModel extends module_model {
     public function mkDirPath($fullPath, $mode) {
       $dirs = explode('/', $fullPath);
       $path = '';
-      foreach($dir as $dir) {
+      foreach($dirs as $dir) {
         $path.=$dir;
         $this->mkDir($path, $mode);
         $path.='/';
@@ -424,31 +418,31 @@ class fileFast extends mySQL {
 		}	
 	}
 	
-	private function fastimage($codename) {
-		$sql = 'SELECT * FROM `files` WHERE codename = \''.$codename.'\'';
-    	$this->query($sql);
-    	if ($this->numRows() == 1) {
-    		#$coll = new fileColl();
-    		$file = $this->fetchRowA();
-    		$item = new fileItem($file);  		   	
-    		// открываем файл в бинарном режиме
-    		$name = trim($_SERVER["DOCUMENT_ROOT"].'/'.DIR_UPLOAD.$item->folder.'/'.$item->codename);
-    		if (!is_file($name)) exit ('Не файл:'. $name);
-    		$fp = fopen($name, 'rb');
-
-    		// отправляем нужные заголовки
-    		header('Content-Type: '.$item->mime.'; charset=utf-8');
-    		//header('Content-Type: '.$item->mime.'; charset=windows-1251');
-    		header("Content-Length: " . filesize($name));
-    		fpassthru($fp);
-    		fclose($fp);
-    		exit;
-    	}           
-    }	
+//	private function fastimage($codename) {
+//		$sql = 'SELECT * FROM `files` WHERE codename = \''.$codename.'\'';
+//    	$this->query($sql);
+//    	if ($this->numRows() == 1) {
+//    		#$coll = new fileColl();
+//    		$file = $this->fetchRowA();
+//    		$item = new fileItem($file);
+//    		// открываем файл в бинарном режиме
+//    		$name = trim($_SERVER["DOCUMENT_ROOT"].'/'.DIR_UPLOAD.$item->folder.'/'.$item->codename);
+//    		if (!is_file($name)) exit ('Не файл:'. $name);
+//    		$fp = fopen($name, 'rb');
+//
+//    		// отправляем нужные заголовки
+//    		header('Content-Type: '.$item->mime.'; charset=utf-8');
+//    		//header('Content-Type: '.$item->mime.'; charset=windows-1251');
+//    		header("Content-Length: " . filesize($name));
+//    		fpassthru($fp);
+//    		fclose($fp);
+//    		exit;
+//    	}
+//    }
     
     private function fastimage2($codename, $folder, $mime) {
     	global $LOG; 
-    	list($fname, $ext) = explode('.',$codename);
+    	list($fname, ) = explode('.',$codename);
 		$name = trim($_SERVER["DOCUMENT_ROOT"].'/'.DIR_UPLOAD.$folder.'/'.$fname);
 		//stop($name.','.$mime.', '.$codename.', '.$fname);
     	if ($codename != '') {    		    		
@@ -469,7 +463,7 @@ class fileFast extends mySQL {
 class fileProcess extends module_process {
   protected $nModel;
   protected $nView;
-  private $pXSL;
+//  private $pXSL;
   public $action;
   public $assignTo;
   public $assignModule;
@@ -479,7 +473,7 @@ class fileProcess extends module_process {
   /**
   * показывает, произошло ли обновление с помощью функции UPDATE или нидина из опций не была выполнена
   */
-  private $updated;
+    public $updated;
 
   public function __construct ($modName, $assign = 0) {  	
   	
@@ -550,7 +544,7 @@ class fileProcess extends module_process {
       }
       
   	if ($action == 'newfi') {
-      	$count = $this->vals->getVal('fileCount', 'GET', 'integer');
+//      	$count = $this->vals->getVal('fileCount', 'GET', 'integer');
       	
       	$fileInputs = $this->fileInputs;      	
       	$Inputs = $this->nView->viewNewFI($fileInputs);
@@ -630,7 +624,7 @@ class fileProcess extends module_process {
       
       if ($action == 'update') {
       	$p = array();
-      	$collect = new fileColl();	
+//      	$collect = new fileColl();
       	//$this->Log->addToLog($_FILES, __LINE__, __METHOD__);
       	foreach($_FILES as $postName => $filetmp) {
       		$p['id'] = 0;
@@ -651,7 +645,7 @@ class fileProcess extends module_process {
       		if ($up) {
       			$this->nModel->add($file, $this->assignTo);
       		}
-      		$oldFile = $this->Vals->getVal('file_'.$postName, 'POST', 'string');
+//      		$oldFile = $this->Vals->getVal('file_'.$postName, 'POST', 'string');
       		$oldFileID = $this->Vals->getVal('file_'.$postName, 'POST', 'string');
       		//if (preg_match('/([0-9]*)$/',$postName, $tmp)) $oldFileID = $tmp[1]; else $oldFile = 0;
       		
@@ -672,10 +666,8 @@ class fileProcess extends module_process {
       if ($action == 'edit') {
       	$this->Log->addToLog(array($this->assignModule, $this->assignTo), __LINE__, __METHOD__);
       	$collect = $this->nModel->getModule($this->assignModule, $this->assignTo);
-      	$form = $this->nView->viewEdit($this->modName, $this->assignTo, $collect, 1);
+      	$form = $this->nView->viewEdit($collect, 1);
       	return $form;
-
-      	$this->updated = true;
       }
       
       if ($action == 'editfi') {
@@ -688,10 +680,8 @@ class fileProcess extends module_process {
       		$file = $collect->getFileByInputName($fileInput->inputName);
       		if ($file) $fileInput->file = $file; 
       	}
-      	$form = $this->nView->viewEditFI($this->modName, $this->assignTo, $fileInputs);
+      	$form = $this->nView->viewEditFI($fileInputs);
       	return $form;
-
-      	$this->updated = true;
       }
             
       if ($action == 'del') { $this->updated = true; }
@@ -735,15 +725,16 @@ class fileProcess extends module_process {
       	$this->nModel->image($this->vals->getVal('image','GET','string'));
       	$this->updated = true;
       }
-  	if ($action == 'fastimage') {
-      	$this->nModel->fastimage($this->vals->getVal('image','GET','string'));
-      	$this->updated = true;
-      }
-
-      if (!$this->updated) {
-
-      }
-
+//  	if ($action == 'fastimage') {
+//      	$this->nModel->fastimage($this->vals->getVal('image','GET','string'));
+//      	$this->updated = true;
+//      }
+//
+//      if (!$this->updated) {
+//
+//      }
+//
+      return $this->updated;
     }
 
     function generateCode($length=6)
@@ -788,16 +779,16 @@ class fileProcess extends module_process {
     	}
     }
     
-    public function loadModule($modName, $essences) {
-    	$this->nModel->getModuleList($modName, array());
-    } 
+//    public function loadModule($modName, $essences) {
+//    	$this->nModel->getModuleList($modName, array());
+//    }
     
     public function viewImg(fileColl $coll) {      	
       	if ($coll->count()) {
       		$this->nView->getImgTags ($coll);
       		$this->Log->addToLog(array('xxxx Обработка колл. файлов ', $coll->count()), __LINE__, __METHOD__);
       	} else {
-      		$this->Log->addWarning(array('Пустая коллекция ', $essence_module, $this->modName), __LINE__, __METHOD__);
+      		$this->Log->addWarning(array('Пустая коллекция ', '', $this->modName), __LINE__, __METHOD__);
       		$fake = new fileItem(array());
       		$fake->isImage = false;
       		$coll->add($fake);
@@ -819,7 +810,7 @@ class fileView extends module_view {
     #$form = new CFormGenerator('file', SITE_ROOT.$this->modName.'/update-'.$item->getID().'/', 'POST', 0);
     $form = new CFormGenerator('file', SITE_ROOT.$this->modName.'/add-1/', 'POST', 0);
     #$form->addHidden('add', '1', 'add');
-    #$form->addHidden('user_id', $user_id, 'user_id');
+    $form->addHidden('user_id', $user_id, 'user_id');
     for($i=1;$i<=$count;$i++) {
       $form->addFile('filename'.$i, '', 'Файл', 'filename'.$i, '', '','filename');
     #($name, $value, $label, $id, $class, $size)
@@ -843,8 +834,8 @@ class fileView extends module_view {
     return $form->getInputs();
   }
 
-  public function viewEdit($module, $essence_module, fileColl $collect, $count = 1) {
-    global $User;
+  public function viewEdit(fileColl $collect, $count = 1) {
+//    global $User;
     $this->pXSL[] = RIVC_ROOT.'layout/'.$this->modName.'.new.xsl';
 
     $form = new CFormGenerator('file', SITE_ROOT.$this->modName.'/update-0/', 'POST', 0);
@@ -865,14 +856,14 @@ class fileView extends module_view {
     return $form->getInputs();
   }
   
-  public function viewEditFI($module, $essence_module, fileInputColl $fileInputs) {
-    global $User;
+  public function viewEditFI(fileInputColl $fileInputs) {
+//    global $User;
     $this->pXSL[] = RIVC_ROOT.'layout/'.$this->modName.'.new.xsl';
 
     $form = new CFormGenerator('file', SITE_ROOT.$this->modName.'/update-0/', 'POST', 0);
 //stop($fileInputs->count());
     $iterator = $fileInputs->getIterator();
-    $index = 1;
+//    $index = 1;
     foreach ($iterator as $fileInput) {
     	$item = $fileInputs->getFileByInputName($fileInput->inputName);
     	if (!$item) $item = new fileItem(array());
@@ -921,8 +912,8 @@ class fileView extends module_view {
       	$item->mime = str_replace('/','_',$item->mime);
       	$data = $item->toArray();
       	$data['ext'] = substr($item->filename,-3);      	     
-        $img = $this->arrToXML($data, $images, 'image');
-        $this->addAttr('inp', $item->inputName, $img);
+        $this->arrToXML($data, $images, 'image');
+//        $this->addAttr('inp', $item->inputName, $img);
         $this->Log->addToLog($item->toArray(), __LINE__, __METHOD__);
       }
       #stop($this->getBody(),0);
@@ -948,10 +939,9 @@ class fileView extends module_view {
    	$gallery = $this->newContainer('fileGallery');
    	$iterator = $collect->getIterator();
     foreach ($iterator as $item) {
-        $img = $this->arrToXML($item->toArray(), $images, 'file');
-        $this->addAttr('inp', $item->inputName, $img);
+        $this->arrToXML($item->toArray(), $item, 'file');
+//        $this->addAttr('inp', $item->inputName, $img);
         //$this->Log->addToLog($item->toArray(), __LINE__, __METHOD__);
       }
    }
 }
-?>

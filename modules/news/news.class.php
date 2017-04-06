@@ -29,7 +29,6 @@ class newsItem extends module_item {
   public $files;
 
   public function __construct ($Params) {
-    global $LOG;
     parent::__construct();
     if (isset($Params['id'])) $this->id = $Params['id']; else $this->id = 0;
     if (isset($Params['title'])) $this->title = $Params['title']; else $this->title = 0;
@@ -84,7 +83,7 @@ class newsModel extends module_model {
     	//stop($item);
       $res = $item->toInsert();
       
-      $sql = 'INSERT INTO news ('.$res[0].') VALUES('.$res[1].')';
+      $sql = 'INSERT INTO news ('.$res[0].') VALUES ('.$res[1].')';
       $q = array_merge(array(0=>$sql),$res[2]);
       $this->query($q);
       $id = $this->insertID();
@@ -94,7 +93,7 @@ class newsModel extends module_model {
 
     public function update(newsItem $item) {      
     	
-      $sql = 'UPDATE news SET `title` =  \'%2$s\', `content` = \'%3$s\', language= \'%4$s\',`time` = \'%5$s\',`subject` = \'%6$s\' WHERE id = %1$u';
+      $sql = 'UPDATE news SET `title` =  \'%2$s\', `content` = \'%3$s\', language= \'%4$s\',`time` = \'%5$s\',`subject` = \'%6$s\' WHERE id = \'%1$u\'';
     
      $res = $this->query($sql, $item->id, $item->title, $item->content, $item->language, $item->time, $item->subject);
           
@@ -128,19 +127,20 @@ class newsModel extends module_model {
 			    	fm.`module` file_module, 
 			    	fm.`essence_module` as file_essence_module
       			FROM news n
-      			LEFT JOIN `files_modules` fm ON fm.module = \'%4$s\' AND fm.essence_module = n.id              
+      			LEFT JOIN `files_modules` fm ON fm.module = \''.$this->modSet->defModName.'\' AND fm.essence_module = n.id              
               	LEFT JOIN `files` f ON fm.essence_id = f.id
-      			WHERE n.id = %1$u and language=\''.$lang.'\'';
-      if ($noshow) $sql.= ' AND n.noshow = %2$u';
-      if ($user_id) $sql.= ' AND n.user_id = %3$u';
-      $this->query($sql, $id, $noshow, $user_id, $this->modSet->defModName);
+      			WHERE n.id = \''.$id.'\' and language=\''.$lang.'\'';
+      if ($noshow) $sql.= ' AND n.noshow = '.$noshow;
+      if ($user_id) $sql.= ' AND n.user_id = '.$user_id;
+      $this->query($sql);
       //stop($this->sql,0);
       //$res = $this->fetchOneRowA();
     
       $a = true;
+      $news = false;
+
       //stop($this->numRows());
       if ($this->numRows() == 0) {
-      
       	$this->Log->addError(array('Новость не найдена'), __LINE__, __METHOD__);	
       	//$news = new newsItem(array());
       	$news = false;
@@ -159,23 +159,22 @@ class newsModel extends module_model {
     }
 
     public function del($id) {
-      $sql = 'DELETE FROM news WHERE id=%1$u';
+      $sql = 'DELETE FROM news WHERE id=\'%1$u\'';
       $this->query($sql, $id);
       $pFile = new fileProcess($this->modSet->defModName, $id);
       $pFile->update('delfile', $id);
     }
-/**
- * 
+/* *
  * @param $noshow
  * @param $limStart
  * @param $limCount
  * @return unknown_type
  */
     public function getList($noshow, $page, $limCount) {
-    	
-      $this->Log->addToLog('Вход', __LINE__, __METHOD__);
-      $lang='ru';
-      $row=$this->query("SELECT COUNT(*) FROM news WHERE  language='$lang'", 0);
+
+        $this->Log->addToLog('Вход', __LINE__, __METHOD__);
+        $lang = 'ru';
+        $this->query("SELECT COUNT(*) FROM news WHERE  language='$lang'", 0);
      
       
       $limStart = 0;
@@ -248,12 +247,12 @@ class newsModel extends module_model {
 }
 
 class newsProcess extends module_process {
-  private $pXSL;
+//  private $pXSL;
   # protected $xml;
   /**
   * показывает, произошло ли обновление с помощью функции UPDATE или нидина из опций не была выполнена
   */
-  private $updated;
+  public $updated;
 
   public function __construct ($modName) {
     parent::__construct($modName);
@@ -285,14 +284,14 @@ class newsProcess extends module_process {
 
       $this->Log->addToLog('Новости', __LINE__, __METHOD__);
       if ($_action) $this->action = $_action;
-      $action = $this->actionDefault;
+//      $action = $this->actionDefault;
       if ($this->action) $action = $this->action;
       else $action = $this->checkAction();
       if (!$action) {
       	$this->Vals->URLparams($this->sysMod->defQueryString);
       	$action = $this->actionDefault;
       }
-      $user_id = $this->User->getUserID();
+//      $user_id = $this->User->getUserID();
       $user_right = $this->User->getRight($this->modName, $action);
        
       if ($user_right == 0) {
@@ -403,7 +402,7 @@ class newsProcess extends module_process {
             
   			$news_id =$this->vals->getVal('news_id', 'get', 'integer');
               
-            $item = $this->nModel->del($news_id);
+            $this->nModel->del($news_id);
            
             if($news_id == 0)
             {
@@ -441,7 +440,7 @@ class newsProcess extends module_process {
             $script_name =  basename($_SERVER["SCRIPT_NAME"]);
 */
             $Archive = new archiveStruct($this->modName,$collect->newsCount,$limCount, $page, '');
-            $conteiner = $this->nView->viewList($collect, $Archive);
+            $this->nView->viewList($collect, $Archive);
             
             $this->updated = true;
       }
@@ -483,7 +482,7 @@ class newsProcess extends module_process {
         $page = $this->vals->getVal('page', 'GET', 'integer');
         if ($page <= 0 || $page == NULL) {
         	$this->Vals->setValTo('page','1','GET');
-        	$page == 1;
+        	$page = 1;
         }
         $collect = $this->nModel->getList(0,0,$limCount);
         $Archive = new archiveStruct($this->modName,$collect->count(),$limCount, $page, '');
@@ -593,8 +592,6 @@ class newsView extends module_view {
     //  $pFile = new fileProcess($this->sysMod->defModName);
       foreach ($iterator as $item) {
         //$this->Log->addToLog($item->toArray(), __LINE__, __METHOD__);
-        $iArray = $item->toArray();
-      	
         //unset($iArray['files']);
         // $itemConteiner = $this->arrToXML($iArray, $Container, 'item');
         $itemConteiner = $this->addToNode($Container, 'item',''); 
@@ -665,7 +662,6 @@ class newsView extends module_view {
     //  $pFile = new fileProcess($this->sysMod->defModName);
       foreach ($iterator as $item) {
         //$this->Log->addToLog($item->toArray(), __LINE__, __METHOD__);
-        $iArray = $item->toArray();
         //unset($iArray['files']);
         // $itemConteiner = $this->arrToXML($iArray, $Container, 'item');
         $itemConteiner = $this->addToNode($Container, 'item',''); 
@@ -689,4 +685,3 @@ class newsView extends module_view {
       return true;
     }
 }
-?>
