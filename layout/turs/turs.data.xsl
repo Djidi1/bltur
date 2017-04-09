@@ -2,16 +2,13 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="container[@module = 'turlist']">
         <xsl:if test="//page/@isAjax != 1">
+            <ol class="breadcrumb">
+                <li><a href="/">Главная</a></li>
+                <xsl:value-of select="@tour_name" disable-output-escaping="yes"/>
+                <xsl:value-of select="@tour_path" disable-output-escaping="yes"/>
+            </ol>
             <div class="row">
                 <div class="col-md-8">
-                    <div class="alert alert-info" style="text-align:center">
-                        <h1>
-                            <xsl:value-of select="@tour_name"/>
-                        </h1>
-                        <h3>
-                            <xsl:value-of select="@tour_path"/>
-                        </h3>
-                    </div>
                     <div class="box-container">
                         <div class="panel panel-info" style="width:100%">
                             <!-- Default panel contents -->
@@ -20,9 +17,9 @@
                                 <xsl:value-of select="item/overview" disable-output-escaping="yes"/>
                             </div>
                         </div>
-                        <div style="text-align:center">
-                            <div class="btn btn-success">Заказать тур</div>
-                        </div>
+                        <!--<div style="text-align:center">-->
+                        <!--<div class="btn btn-success">Заказать тур</div>-->
+                        <!--</div>-->
                     </div>
                 </div>
                 <div class="col-md-4">

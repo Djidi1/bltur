@@ -12,6 +12,16 @@
                     </div>
                 </div>
             </xsl:if>
+
+            <xsl:if test="@tour_name != ''">
+                <ol class="breadcrumb">
+                    <li><a href="/">Главная</a></li>
+                    <xsl:value-of select="@tour_name" disable-output-escaping="yes"/>
+                    <xsl:if test="@tour_path != ''">
+                        <xsl:value-of select="@tour_path" disable-output-escaping="yes"/>
+                    </xsl:if>
+                </ol>
+            </xsl:if>
             <div class="row">
                 <xsl:if test="count(news/item) > 0">
                     <div class="col-md-3">
@@ -78,20 +88,24 @@
                     <xsl:if test="count(news/item) = 0">
                         <xsl:attribute name="class">col-md-8</xsl:attribute>
                     </xsl:if>
-                    <div class="alert alert-info">
-                        <h1>
-                            <xsl:value-of select="@tour_name"/>
-                        </h1>
-                    </div>
-                    <div class="box-container">
-                        <xsl:for-each select="tour_types/item">
-                            <a href="/turs/main_type-{id}/" class="btn btn-lg btn-success">
-                                <xsl:if test="id_main_type > 0">
-                                    <xsl:attribute name="href">/turs/sub_type-<xsl:value-of select="id"/>/</xsl:attribute>
-                                </xsl:if>
-                                <xsl:value-of select="btn_name"/>
-                            </a>
-                        </xsl:for-each>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                Выберите направление
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="box-container">
+                                <xsl:for-each select="tour_types/item">
+                                    <a href="/turs/main_type-{id}/" class="btn btn-lg {btn-style}">
+                                        <xsl:if test="id_main_type > 0">
+                                            <xsl:attribute name="href">/turs/sub_type-<xsl:value-of select="id"/></xsl:attribute>
+                                        </xsl:if>
+                                        <xsl:value-of select="btn_name"/>
+                                    </a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">

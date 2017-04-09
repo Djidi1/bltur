@@ -18,6 +18,41 @@
 									</td>
 								</tr>
 								<tr>
+									<th>Связь с навигацией:</th>
+									<td>
+										<select class="" name="id_tour_sub_type" onchange="upd_tour_info(this)">
+											<xsl:for-each select="nav/item">
+												<option value="{id}" rel="{id_program}">
+													<xsl:if test="id = //tur/id_tour_sub_type">
+														<xsl:attribute name="selected">selected</xsl:attribute>
+													</xsl:if>
+													<xsl:value-of select="tour_sub_name"/> (<xsl:value-of select="tour_main_type"/>)
+												</option>
+											</xsl:for-each>
+										</select>
+									</td>
+								</tr>
+								<tr><th>Признаки тура:</th><td>
+									<label class="btn btn-danger">
+										<input type="checkbox" onclick="if (this.checked) $('#fire').val('1'); else $('#fire').val('0');">
+											<xsl:if test="tur/fire = 1"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
+										Горящий
+									</label>
+									<label class="btn btn-warning">
+										<input type="checkbox" onclick="if (this.checked) $('#action').val('1'); else $('#action').val('0');">
+											<xsl:if test="tur/action = 1"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
+										Акционный
+									</label>
+									<label class="btn btn-success">
+										<input type="checkbox" onclick="if (this.checked) $('#party').val('1'); else $('#party').val('0');">
+											<xsl:if test="tur/party = 1"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
+										Праздничный
+									</label>
+									<input id="action" class="" type="hidden" name="action" value="{tur/action}"/>
+									<input id="fire" class="" type="hidden" name="fire" value="{tur/fire}"/>
+									<input id="party" class="" type="hidden" name="party" value="{tur/party}"/></td>
+								</tr>
+								<tr>
 									<th>Тип тура:</th>
 									<td>
 										<select class="" name="id_type">
@@ -31,64 +66,67 @@
 											</xsl:for-each>
 										</select>
 									</td>
-								</tr><tr>
-									<th>Страна:</th>
-									<td>
-										<select class="" name="id_loc">
-											<xsl:for-each select="locs/item">
-												<option value="{id}">
-													<xsl:if test="id = //tur/id_loc">
-														<xsl:attribute name="selected">selected</xsl:attribute>
-													</xsl:if>
-													<xsl:value-of select="name"/>
-												</option>
-											</xsl:for-each>
-										</select>
-									</td>
 								</tr>
-								<!--<tr>
-									<th>Из района:</th>
-									<td>
-										<select class="" name="id_loc">
-											<xsl:for-each select="locs/item">
-												<option value="{id}">
-													<xsl:if test="id = //tur/id_loc">
-														<xsl:attribute name="selected">selected</xsl:attribute>
-													</xsl:if>
-													<xsl:value-of select="name"/>
-												</option>
-											</xsl:for-each>
-										</select>
-										--><!--<div class="col-xs-4">
+                                <!---->
+								<!--<tr>-->
+									<!--<th>Страна:</th>-->
+									<!--<td>-->
+										<!--<select class="" name="id_loc">-->
+											<!--<xsl:for-each select="countries/item">-->
+												<!--<option value="{id}">-->
+													<!--<xsl:if test="id = //tur/id_country">-->
+														<!--<xsl:attribute name="selected">selected</xsl:attribute>-->
+													<!--</xsl:if>-->
+													<!--<xsl:value-of select="name"/>-->
+												<!--</option>-->
+											<!--</xsl:for-each>-->
+										<!--</select>-->
+									<!--</td>-->
+								<!--</tr>-->
+								<!--<tr>-->
+								<!--<th>Город:</th>-->
+								<!--<td>-->
+								<!--<select class="" name="id_city">-->
+									<!--<xsl:for-each select="citys/item">-->
+										<!--<option value="{id}">-->
+											<!--<xsl:if test="id = //tur/id_city">-->
+												<!--<xsl:attribute name="selected">selected</xsl:attribute>-->
+											<!--</xsl:if>-->
+											<!--<xsl:value-of select="name"/>-->
+										<!--</option>-->
+									<!--</xsl:for-each>-->
+								<!--</select>-->
+								<!--<div class="col-xs-8"/>-->
+								<!--<div class="col-xs-4">-->
+								<!--<button class="btn btn-info" onclick="var round_id=$('input[name=\'round_id\']').val(); open_dialog('/tc/cityNew-1/tur_id-{tur/id}/round_id-'+round_id+'/','Добавить город',320,350); return false;">Добавить</button>-->
+									<!--</div>-->
+									<!--</td>-->
+								<!--</tr>-->
+								<!--<div class="col-xs-8"></div>
+                        <div class="col-xs-4">
+                        <button class="btn btn-info" onclick="var round_id=$('input[name=\'round_id\']').val(); open_dialog('http://{//page/@host}/tc/cityNew-1/tur_id-{tur/id}/round_id-'+round_id+'/','Добавить город',320,350); return false;">Добавить</button>
+                            </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Из района:</th>
+                            <td>
+                                <select class="" name="id_loc">
+                                    <xsl:for-each select="locs/item">
+                                        <option value="{id}">
+                                            <xsl:if test="id = //tur/id_loc">
+                                                <xsl:attribute name="selected">selected</xsl:attribute>
+                                            </xsl:if>
+                                            <xsl:value-of select="name"/>
+                                        </option>
+                                    </xsl:for-each>
+                                </select>
+                                --><!--<div class="col-xs-4">
 								<button class="btn btn-info" onclick="var round_id=$('input[name=\'round_id\']').val(); open_dialog('http://{//page/@host}/tc/locNew-1/tur_id-{tur/id}/round_id-'+round_id+'/','Добавить район отправления',320,350); return false;">Добавить</button>
 									</div>--><!--
 									</td>
 								</tr>
-								<tr>
-									<th>Направление:</th>
-									<td>
-										<select class="" name="id_city">
-											<xsl:for-each select="citys/item">
-												<option value="{id}">
-													<xsl:if test="id = //tur/id_city">
-														<xsl:attribute name="selected">selected</xsl:attribute>
-													</xsl:if>
-													<xsl:value-of select="name"/>
-												</option>
-											</xsl:for-each>
-										</select>
-										--><!--<div class="col-xs-8"></div>
-								<div class="col-xs-4">
-								<button class="btn btn-info" onclick="var round_id=$('input[name=\'round_id\']').val(); open_dialog('http://{//page/@host}/tc/cityNew-1/tur_id-{tur/id}/round_id-'+round_id+'/','Добавить город',320,350); return false;">Добавить</button>
-									</div>--><!--
-									</td>
-								</tr>-->
-										<!--<div class="col-xs-8"></div>
-								<div class="col-xs-4">
-								<button class="btn btn-info" onclick="var round_id=$('input[name=\'round_id\']').val(); open_dialog('http://{//page/@host}/tc/cityNew-1/tur_id-{tur/id}/round_id-'+round_id+'/','Добавить город',320,350); return false;">Добавить</button>
-									</div>
-									</td>
-								</tr>-->
+								-->
 								<tr>
 									<th>Транспорт:</th>
 									<td>
@@ -104,23 +142,23 @@
 										</select>
 									</td>
 								</tr>
-								<tr>
-									<th>Цель поездки:</th>
-									<td>
-										<select class="" name="id_target">
-											<xsl:for-each select="targets/item">
-												<xsl:if  test="id != 6">
-												<option value="{id}">
-													<xsl:if test="id = //tur/tur_target">
-														<xsl:attribute name="selected">selected</xsl:attribute>
-													</xsl:if>
-													<xsl:value-of select="target_name"/>
-												</option>
-												</xsl:if>
-											</xsl:for-each>
-										</select>
-									</td>
-								</tr>
+								<!--<tr>-->
+									<!--<th>Цель поездки:</th>-->
+									<!--<td>-->
+										<!--<select class="" name="id_target">-->
+											<!--<xsl:for-each select="targets/item">-->
+												<!--<xsl:if  test="id != 6">-->
+												<!--<option value="{id}">-->
+													<!--<xsl:if test="id = //tur/tur_target">-->
+														<!--<xsl:attribute name="selected">selected</xsl:attribute>-->
+													<!--</xsl:if>-->
+													<!--<xsl:value-of select="target_name"/>-->
+												<!--</option>-->
+												<!--</xsl:if>-->
+											<!--</xsl:for-each>-->
+										<!--</select>-->
+									<!--</td>-->
+								<!--</tr>-->
 								<tr>
 									<th>Даты тура:</th>
 									<td class="form-inline">
@@ -179,11 +217,6 @@
 										</div>
 									</td>
 								</tr>
-								<tr><th>Горящий:</th><td>
-									<input type="checkbox" onclick="if (this.checked) $('#fire').val('1'); else $('#fire').val('0');">
-										<xsl:if test="tur/fire = 1"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if></input>
-									<input id="fire" class="" type="hidden" name="fire" value="{tur/fire}"/></td>
-								</tr>	
 								<tr>
 									<th>Описание тура:</th>
 									<td>

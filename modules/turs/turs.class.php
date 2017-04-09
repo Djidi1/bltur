@@ -147,11 +147,15 @@ class siteModel extends module_model {
     }
 
     public function getTourTypePath($id, $prev_name) {
-        $sql = "SELECT tour_sub_name, parent_id  FROM tc_tour_sub_types WHERE id = $id";
+        $sql = "SELECT id, tour_sub_name, parent_id  FROM tc_tour_sub_types WHERE id = $id";
         $this->query($sql);
         $item = $this->fetchRowA();
-        $name = $item['tour_sub_name'] . ($prev_name != ''?" / ".$prev_name:'');
         $parent_id = $item['parent_id'];
+        $id = $item['id'];
+        $name = $item['tour_sub_name'];
+        if ($name != '') {
+            $name = "<li><a href='/turs/sub_type-$id'>" . $name . "</a></li>" . ($prev_name != '' ? "" . $prev_name : '');
+        }
         if ($parent_id > 0){
             $name = $this->getTourTypePath($parent_id, $name);
         }
@@ -161,13 +165,19 @@ class siteModel extends module_model {
     public function getTourTypeName($id) {
         $sql = "SELECT tour_main_title FROM tc_tour_main_types WHERE id = $id";
         $this->query($sql);
-        return $this->getOne();
+        $name = $this->getOne();
+        $name = "<li><a href='/turs/main_type-$id'>".$name."</a></li>";
+        return $name;
     }
     public function getTourTypes() {
         $sql = 'SELECT id, tour_main_type btn_name, sort, dk FROM tc_tour_main_types';
         $this->query($sql);
         $items = array();
+        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+        $i = 0;
         while(($row = $this->fetchRowA())!==false) {
+            $row['btn-style'] = $btn_style[$i];
+            $i = ($i > 3) ? 0 : $i + 1;
             $items[] = $row;
         }
         return $items;
@@ -180,7 +190,11 @@ class siteModel extends module_model {
         }
         $this->query($sql);
         $items = array();
+        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+        $i = 0;
         while(($row = $this->fetchRowA())!==false) {
+            $row['btn-style'] = $btn_style[$i];
+            $i = ($i > 3) ? 0 : $i + 1;
             $items[] = $row;
         }
         return $items;
@@ -195,39 +209,47 @@ class siteModel extends module_model {
         $items = $this->fetchRowA();
         return $items;
     }
-	public function getTopTen() {
-		$sql = 'SELECT 
-				  tt.id,
-				  tt.name tur_name,
-				  tt.date tur_date,
-				  tt.date_to tur_date_finish,
-				  tc.name tur_from,
-				  tl.name tur_to,
-				  tg.name gid_name,
-				  tg.phone gid_phone,
-				  tg.comment gid_comment,
-				  tb.number bus_numner,
-				  tt.cost tur_cost,
-				  tt.currency tur_cost_curr,
-				  tt.id_page,
-				  tt.fire,
-				  tt.days,
-				  tt.dop_info,
-                tt.overview,
-                tt.bus_size,
-                tt.tur_transport,
-				  tt.comment,
-				  tm.name tur_type,
-					(select count(*) from tc_tur_list tl2 WHERE tl2.id_tur = tt.`id`) turists
+	public function getTopTen($id_sub_type, $id_main_type, $id_parent = 0, $step = 0) {
+        $id_sub_type = ($id_sub_type > 0) ? $id_sub_type:'0';
+        $id_main_type = ($id_main_type > 0) ? $id_main_type:'0';
+		$sql = "SELECT 
+                    tt.id,
+                    tt.name tur_name,
+                    tt.date tur_date,
+                    tt.date_to tur_date_finish,
+                    tc.name tur_from,
+                    tl.name tur_to,
+                    tg.name gid_name,
+                    tg.phone gid_phone,
+                    tg.comment gid_comment,
+                    tb.number bus_numner,
+                    tt.cost tur_cost,
+                    tt.currency tur_cost_curr,
+                    tt.id_page,
+                    tt.fire,
+                    tt.days,
+                    tt.dop_info,
+                    tt.overview,
+                    tt.bus_size,
+                    tt.tur_transport,
+                    tt.comment,
+                    tm.name tur_type,
+                    (select count(*) from tc_tur_list tl2 WHERE tl2.id_tur = tt.`id`) turists
 				FROM tc_tur tt
 				LEFT JOIN tc_citys tc ON tc.id = tt.id_city
+				LEFT JOIN tc_tour_sub_types ttst ON ttst.id = tt.id_tour_sub_type
+				LEFT JOIN tc_tour_main_types ttmt ON ttmt.id = ttst.id_main_type
 				LEFT JOIN tc_locations tl ON tl.id = tt.id_loc
 				LEFT JOIN tc_gids tg ON tg.id = tt.id_gid
 				LEFT JOIN tc_bus tb ON tb.id = tt.id_bus
 				LEFT JOIN tc_menu tm ON tm.id = tt.id_type
-				  WHERE ((date >= NOW() - INTERVAL 1 DAY) /*or (tt.date_to >= NOW() - INTERVAL 1 DAY and tt.tur_type = 3)*/)
+				  WHERE ((date >= NOW() - INTERVAL 1 DAY) 
+				        AND (tt.id_tour_sub_type = $id_sub_type OR $id_sub_type = 0)
+				        AND (ttst.parent_id = $id_parent OR $id_parent = 0)
+				        AND (ttmt.id = $id_main_type OR $id_main_type = 0)
+				        /*or (tt.date_to >= NOW() - INTERVAL 1 DAY and tt.tur_type = 3)*/)
 				  ORDER BY tt.date
-				  LIMIT 0,15';
+				  LIMIT 0,15";
 		$this->query($sql);
 		$items = array();
 		while(($row = $this->fetchRowA())!==false) {
@@ -236,10 +258,13 @@ class siteModel extends module_model {
 			$row ['tur_date'] = iconv('windows-1251','Utf-8', $row ['tur_date']);
 			$row ['comment_alert'] = isset($row ['comment']) ? nl2br($row ['comment']) : '';
 			$row ['comment_alert'] = str_replace("\r\n",'', $row ['comment_alert']);
-
-			//$row ['comment'] = nl2br($row ['comment']);
 			$items[] = $row;
 		}
+		// Если не нашли ни одного конечного тура, то ищем по родителям, но не более 5 итераций
+		if (count($items) == 0 and $step < 5){
+            $step++;
+            $items = $this->getTopTen(0, $id_main_type, $id_sub_type, $step);
+        }
 		return $items;
 	}
 	public function getCountrys() {
@@ -572,11 +597,13 @@ class siteProcess extends module_process {
 		if ($action == 'view') {
             $id_main_type = $this->Vals->getVal ( 'main_type', 'GET', 'integer' );
             $id_sub_type = $this->Vals->getVal ( 'sub_type', 'GET', 'integer' );
-            $topten = $this->nModel->getTopTen ();
+            $topten = $this->nModel->getTopTen ($id_sub_type, $id_main_type);
+            $tour_path = '';
             if ($id_main_type > 0 or $id_sub_type > 0){
                 $tour_types = $this->nModel->getTourSubTypes ($id_main_type, $id_sub_type);
                 if (isset($tour_types[0]['id_main_type'])) {
                     $tour_name = $this->nModel->getTourTypeName($tour_types[0]['id_main_type']);
+                    $tour_path = $this->nModel->getTourTypePath($id_sub_type, '');
                 }else{
                     $tour_data = $this->nModel->getTourData($id_sub_type);
                     $tour_name = $this->nModel->getTourTypeName($tour_data['id_main_type']);
@@ -590,7 +617,7 @@ class siteProcess extends module_process {
 		    if (isset($tour_types) and !isset($tour_data)) {
                 /* показать список новостей */
                 $news = (isset($tour_name) and $tour_name != '')?array():$this->nModel->getNewsList(3);
-                $this->nView->viewTur($tour_name, $tour_types, $topten, $news);
+                $this->nView->viewTur($tour_name, $tour_path,  $tour_types, $topten, $news);
             }
 		}
 		
@@ -835,10 +862,11 @@ class siteView extends module_View {
 		$this->pXSL = array ();
 	}
 	
-	public function viewTur($tour_name, $tour_types, $topten, $news) {
+	public function viewTur($tour_name, $tour_path, $tour_types, $topten, $news) {
 		$this->pXSL [] = RIVC_ROOT . 'layout/'.$this->sysMod->layoutPref.'/turs.view.xsl';
         $Container = $this->newContainer ( 'turlist' );
         $this->addAttr('tour_name',$tour_name, $Container);
+        $this->addAttr('tour_path',$tour_path, $Container);
         $ContainerTourTypes = $this->addToNode ( $Container, 'tour_types', '' );
         foreach ( $tour_types as $item ) {
             $this->arrToXML ( $item, $ContainerTourTypes, 'item' );

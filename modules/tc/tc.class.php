@@ -581,28 +581,28 @@ class tcModel extends module_model
 
     public function turUpdate($params)
     {
-
         foreach ($params['date'] as $key => $date) {
             $sql = 'UPDATE `tc_tur` SET dk=NOW(),
-		`name` = \'' . $params['name'] . '\',
-		`date` = \'' . $this->dmy_to_mydate($date) . '\',
-		`date_to` = \'' . $this->dmy_to_mydate($params['date_to'][$key]) . '\',
-		`days` = \'' . $params['days'][$key] . '\', 
-		`id_city` = \'' . $params['id_city'] . '\', 
-		`tur_transport` = \'' . $params['id_transport'] . '\', 
-		`tur_target` = \'' . $params['id_target'] . '\', 
-		`overview` = \'' . htmlspecialchars(str_replace('%', '%%', $params['overview']), ENT_QUOTES) . '\', 
-		`id_loc` = \'' . $params['id_loc'] . '\',
-		`cost` = \'' . $params['cost'] . '\',
-		`currency` = \'' . $params['currency'] . '\',  
-		`tur_type` = \'' . $params['id_type'] . '\', 
-		`dop_info` = \'' . $params['dop_info'] . '\', 
-		`fire` = \'' . $params['fire'] . '\', 
-		`bus_size` = \'' . $params['bus_size'] . '\', 
-		`comment` = \'' . $params['comment'] . '\'
-		WHERE `id` = \'' . $params['tur_id'] . '\'';
-            if (!$this->query($sql))
+            `name` = \'' . $params['name'] . '\',
+            `id_tour_sub_type` = \'' . $params['id_tour_sub_type'] . '\',
+            `date` = \'' . $this->dmy_to_mydate($date) . '\',
+            `date_to` = \'' . $this->dmy_to_mydate($params['date_to'][$key]) . '\',
+            `days` = \'' . $params['days'][$key] . '\', 
+            `tur_transport` = \'' . $params['id_transport'] . '\', 
+            `overview` = \'' . htmlspecialchars(str_replace('%', '%%', $params['overview']), ENT_QUOTES) . '\', 
+            `cost` = \'' . $params['cost'] . '\',
+            `currency` = \'' . $params['currency'] . '\',  
+            `tur_type` = \'' . $params['id_type'] . '\', 
+            `dop_info` = \'' . $params['dop_info'] . '\', 
+            `fire` = \'' . $params['fire'] . '\', 
+            `action` = \'' . $params['action'] . '\', 
+            `party` = \'' . $params['party'] . '\', 
+            `bus_size` = \'' . $params['bus_size'] . '\', 
+            `comment` = \'' . $params['comment'] . '\'
+            WHERE `id` = \'' . $params['tur_id'] . '\'';
+            if (!$this->query($sql)){
                 return false;
+            }
         }
         return true;
     }
@@ -612,40 +612,45 @@ class tcModel extends module_model
         foreach ($params['date'] as $key => $date) {
             // Если не указана вторая дата, то устанавливаем ее равной первой.
             $date_to = (trim($params['date_to'][$key]) != '') ? $params['date_to'][$key] : $date;
-
             $sql = 'INSERT INTO `tc_tur` 
-		(`name`,
-		`date`,
-		`date_to`,
-		`days`,
-		`id_city`,
-		`tur_transport`,
-		`tur_target`,
-		`id_loc`,
-		`cost`,
-		`currency`,
-		`tur_type`,
-		`overview`,
-		`bus_size`,
-		`comment`, dk) 
-		VALUES (
-		\'' . $params['name'] . '\',
-		\'' . $this->dmy_to_mydate($date) . '\',
-		\'' . $this->dmy_to_mydate($date_to) . '\',
-		\'' . $params['days'][$key] . '\',
-		\'' . $params['id_city'] . '\',
-		\'' . $params['id_transport'] . '\',
-		\'' . $params['id_target'] . '\',
-		\'' . $params['id_loc'] . '\',
-		\'' . $params['cost'] . '\',
-		\'' . $params['currency'] . '\',
-		\'' . $params['id_type'] . '\',
-		\'' . htmlspecialchars(str_replace('%', '%%', $params['overview']), ENT_QUOTES) . '\',
-		\'' . $params['bus_size'] . '\',
-		\'' . $params['comment'] . '\', NOW()
-		)';
-            if (!$this->query($sql))
+                        (`name`,
+                        `id_tour_sub_type`,
+                        `date`,
+                        `date_to`,
+                        `days`,
+                        `tur_transport`,
+                        `cost`,
+                        `currency`,
+                        `tur_type`,
+                        `fire`,
+                        `action`,
+                        `party`,
+                        `overview`,
+                        `bus_size`,
+                        `dop_info`, 
+                        `comment`, 
+                        dk) 
+                        VALUES (
+                        \'' . $params['name'] . '\',
+                        \'' . $params['id_tour_sub_type'] . '\',
+                        \'' . $this->dmy_to_mydate($date) . '\',
+                        \'' . $this->dmy_to_mydate($date_to) . '\',
+                        \'' . $params['days'][$key] . '\',
+                        \'' . $params['id_transport'] . '\',
+                        \'' . $params['cost'] . '\',
+                        \'' . $params['currency'] . '\',
+                        \'' . $params['id_type'] . '\',
+                        \'' . $params['fire'] . '\',
+                        \'' . $params['action'] . '\',
+                        \'' . $params['party'] . '\',
+                        \'' . htmlspecialchars(str_replace('%', '%%', $params['overview']), ENT_QUOTES) . '\',
+                        \'' . $params['bus_size'] . '\',
+                        \'' . $params['dop_info'] . '\', 
+                        \'' . $params['comment'] . '\', 
+                        NOW())';
+            if (!$this->query($sql)) {
                 return false;
+            }
         }
         return true;
     }
@@ -747,6 +752,24 @@ class tcModel extends module_model
         return $items;
     }
 
+    public function getNav()
+    {
+        $sql = 'SELECT 
+                  ttst.id, 
+                  ttmt.tour_main_type, 
+                  ttmt.tour_main_title, 
+                  ttst.tour_sub_name, 
+                  ttst.id_program 
+                FROM tc_tour_sub_types ttst 
+                LEFT JOIN tc_tour_main_types ttmt ON ttst.id_main_type = ttmt.id
+                WHERE ttst.id_program > 0';
+        $this->query($sql);
+        $items = array();
+        while (($row = $this->fetchRowA()) !== false) {
+            $items[] = $row;
+        }
+        return $items;
+    }
     public function getTypes()
     {
         $sql = 'SELECT * FROM `tc_tur_types`';
@@ -1183,6 +1206,7 @@ class tcProcess extends module_process
         $this->regAction('viewAgentReportList', 'Отчет по бронированиям Агента', ACTION_GROUP);
         $this->regAction('viewStoryList', 'Программы туров', ACTION_GROUP);
         $this->regAction('viewSiteTree', 'Структура сайта', ACTION_GROUP);
+        $this->regAction('getData', 'Получить динамические данные', ACTION_GROUP);
 
 
         if (DEBUG == 0) {
@@ -1262,6 +1286,19 @@ class tcProcess extends module_process
 
         if ($user_id > 0 && !$_action) {
             $this->User->nView->viewLoginParams('Система БЛТ', '', $user_id, array(), array(), $this->User->getRight('admin', 'view'));
+        }
+
+
+        if ($action == 'getData'){
+            $type_data = $this->Vals->getVal('type_data', 'GET', 'string');
+            if ($type_data == 'program'){
+                $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
+                $program = $this->nModel->getProgram($id_program);
+                echo htmlspecialchars_decode($program['overview']);
+            }else{
+                echo 'no data';
+            }
+            exit();
         }
 
         if ($action == 'viewSiteTree'){
@@ -1350,6 +1387,7 @@ class tcProcess extends module_process
             if ($tur_id > 0) {
                 $tur = $this->nModel->turGet($tur_id);
             }
+            $nav = $this->nModel->getNav();
             $types = $this->nModel->getTypes();
             $transport = $this->nModel->getTransport();
             $targets = $this->nModel->getTargets();
@@ -1359,7 +1397,7 @@ class tcProcess extends module_process
             $gids = $this->nModel->getGids();
             $bus = $this->nModel->getBus();
             $pages = $this->nModel->getPages();
-            $this->nView->viewTurEdit($tur, $locs, $countris, $citys, $gids, $bus, $pages, $types, $transport, $targets);
+            $this->nView->viewTurEdit($tur, $locs, $countris, $citys, $gids, $bus, $pages, $types, $transport, $targets, $nav);
             $this->updated = true;
         }
 
@@ -1519,11 +1557,9 @@ Array ( [id] => 16524 [id_tur] => 502 [id_mp] => 3 [id_tourist] => 2991 [name_f]
         if ($action == 'turUpdate') {
             $Params ['tur_id'] = $this->Vals->getVal('tur_id', 'POST', 'integer');
             $Params ['name'] = $this->Vals->getVal('name', 'POST', 'string');
+            $Params ['id_tour_sub_type'] = $this->Vals->getVal('id_tour_sub_type', 'POST', 'integer');
             $Params ['id_type'] = $this->Vals->getVal('id_type', 'POST', 'integer');
-            $Params ['id_loc'] = $this->Vals->getVal('id_loc', 'POST', 'integer');
-            $Params ['id_city'] = $this->Vals->getVal('id_city', 'POST', 'integer');
             $Params ['id_transport'] = $this->Vals->getVal('id_transport', 'POST', 'integer');
-            $Params ['id_target'] = $this->Vals->getVal('id_target', 'POST', 'integer');
             $Params ['date'] = $this->Vals->getVal('date', 'POST', 'array');
             $Params ['date_to'] = $this->Vals->getVal('date_to', 'POST', 'array');
             $Params ['days'] = $this->Vals->getVal('days', 'POST', 'array');
@@ -1533,7 +1569,12 @@ Array ( [id] => 16524 [id_tur] => 502 [id_mp] => 3 [id_tourist] => 2991 [name_f]
             $Params ['bus_size'] = $this->Vals->getVal('bus_size', 'POST', 'string');
             $Params ['comment'] = $this->Vals->getVal('comment', 'POST', 'string');
             $Params ['fire'] = $this->Vals->getVal('fire', 'POST', 'integer');
+            $Params ['action'] = $this->Vals->getVal('action', 'POST', 'integer');
+            $Params ['party'] = $this->Vals->getVal('party', 'POST', 'integer');
             $Params ['dop_info'] = $this->Vals->getVal('dop_info', 'POST', 'string');
+//            $Params ['id_target'] = $this->Vals->getVal('id_target', 'POST', 'integer');
+//            $Params ['id_loc'] = $this->Vals->getVal('id_loc', 'POST', 'integer');
+//            $Params ['id_city'] = $this->Vals->getVal('id_city', 'POST', 'integer');
             /*
 			$Params ['id_gid'] = $this->Vals->getVal ( 'id_gid', 'POST', 'integer' );
 			$Params ['id_bus'] = $this->Vals->getVal ( 'id_bus', 'POST', 'integer' );
@@ -1974,11 +2015,15 @@ class tcView extends module_View
         return true;
     }
 
-    public function viewTurEdit($tur, $locs, $countris, $citys, $gids, $bus, $pages, $types, $transport, $targets)
+    public function viewTurEdit($tur, $locs, $countris, $citys, $gids, $bus, $pages, $types, $transport, $targets, $nav)
     {
         $this->pXSL [] = RIVC_ROOT . 'layout/' . $this->sysMod->layoutPref . '/tc.turedit.xsl';
         $Container = $this->newContainer('turedit');
         $this->arrToXML($tur, $Container, 'tur');
+        $ContainerNav = $this->addToNode($Container, 'nav', '');
+        foreach ($nav as $item) {
+            $this->arrToXML($item, $ContainerNav, 'item');
+        }
         $ContainerCountries = $this->addToNode($Container, 'countries', '');
         foreach ($countris as $item) {
             $this->arrToXML($item, $ContainerCountries, 'item');

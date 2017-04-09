@@ -38,27 +38,23 @@ function bank_res(url,title) {
 
 function ui_add(){
 	$('input[type="text"],input[type="password"], textarea').addClass('form-control');
-	$('select').addClass('form-control dropdown-toggle');
+	$('select').addClass('form-control dropdown-toggle').select2({enableFiltering: true});
 	$('input[type="button"]').addClass('btn btn-default');
 	$('input[type="submit"]').addClass('btn btn-success');
 	$('table').addClass('table');
+    $( ".radio" ).buttonset();
+    $('#id_mp_new').val($('.multi_tur').find('option:selected').attr('rel'));
+    // $('#locEdit_color').colorPicker();
 	$('.pass_num').maskInput('** *******');
-//	$('.pass_num').maskInput('** **********');
 	jQuery('.daty').datepicker( {dateFormat: 'dd.mm.yy'});
 	$( ".daty_from" ).datepicker({dateFormat: 'dd.mm.yy',onClose: function( selectedDate ) {$( ".daty_to" ).datepicker( "option", "minDate", selectedDate );}});
 	$( ".daty_to" ).datepicker({dateFormat: 'dd.mm.yy',onClose: function( selectedDate ) {$( ".daty_from" ).datepicker( "option", "maxDate", selectedDate );}});
 //	$("select.multiselect").multiselect();
-	$("select").select2({enableFiltering: true});
 //	$("select.multi").multiselect({enableFiltering: true});
 //	$("select.multi_tur").multiselect({enableFiltering: true});
 	//jQuery('.multiselect').multiselect().multiselectfilter();
 	//jQuery('.multi').multiselect({multiple:false,selectedList:1}).multiselectfilter();
 	//jQuery('.multi_tur').multiselect({multiple:false,selectedList:1}).multiselectfilter();
-	$( ".radio" ).buttonset();
-	var def_mp = $('.multi_tur').find('option:selected').attr('rel'); 
-	$('#id_mp_new').val(def_mp);
-	if ($('#locEdit_color').lenght)
-		$('#locEdit_color').colorPicker();
 	/*$('.multi_tur').bind('multiselectclick', function(event, ui) {
 		var rel = $("option:selected", this).attr("rel"); 
 		$("#mp_result select").val(rel);
@@ -69,6 +65,19 @@ function ui_add(){
 function getRandomInt(min, max)
 {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function upd_tour_info(obj) {
+	var name_tour = $(obj).find('option:selected').text();
+	var id_program = $(obj).find('option:selected').attr('rel');
+	$('input[name=name]').val(name_tour);
+	if (id_program > 0) {
+		$.post('/tc/getData-1/type_data-program/',{id_program:id_program},function(data){
+            CKEDITOR.instances['edit_content'].setData(data);
+		})
+	}
+
+
 }
 
 function save_ct(user_id,round_id){

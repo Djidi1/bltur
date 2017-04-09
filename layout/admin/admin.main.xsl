@@ -87,28 +87,21 @@
 							</div>
 							<div style="float: left;">
 								<div class="icon">
+									<a href="/tc/viewSiteTree-1/">
+										<img src="/images/icon-48-frontpage.png" alt="Структура Туров"/>
+										<span>Структура Туров</span>
+									</a>
+								</div>
+							</div>
+							<div style="float: left;">
+								<div class="icon">
 									<a href="http://{//page/@host}/tc/LocList-1/">
 										<img src="/images/icon-48-category.png" alt="Районы"/>
 										<span>Районы</span>
 									</a>
 								</div>
 							</div>
-							<div style="float: left;">
-								<div class="icon">
-									<a href="http://{//page/@host}/email/">
-										<img src="/images/icon-48-mail.png" alt="Email рассылка"/>
-										<span>Рассылка</span>
-									</a>
-								</div>
-							</div>
-							<div style="float: left;">
-								<div class="icon">
-									<a href="http://{//page/@host}/email/viewlist-1">
-										<img src="/images/icon-48-mail.png" alt="Email подписчики"/>
-										<span>Подписчики</span>
-									</a>
-								</div>
-							</div>
+
 						</td>
 					</tr>
 					<tr>
@@ -130,11 +123,26 @@
 									</a>
 								</div>
 							</div>
+							<div style="float: left;">
+								<div class="icon">
+									<a href="http://{//page/@host}/email/">
+										<img src="/images/icon-48-mail.png" alt="Email рассылка"/>
+										<span>Рассылка</span>
+									</a>
+								</div>
+							</div>
+							<div style="float: left;">
+								<div class="icon">
+									<a href="http://{//page/@host}/email/viewlist-1">
+										<img src="/images/icon-48-mail.png" alt="Email подписчики"/>
+										<span>Подписчики</span>
+									</a>
+								</div>
+							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<xsl:call-template name="linkback"/>
 		</div>
 	</xsl:template>
 </xsl:stylesheet>
