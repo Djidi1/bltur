@@ -1011,18 +1011,58 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
         $sql = "SELECT id, tour_main_type, sort, tour_main_title FROM tc_tour_main_types WHERE id = $id";
         $this->query($sql);
         $row = $this->fetchRowA();
-        $form = '<form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
-                    <input type="hidden" name="tour_main_id" class="form-control" value="'.$row['id'].'">
+        $form = '<div class="panel panel-info">
+                    <div class="panel-heading">Отредкатировать</div>
+                  <div class="panel-body">
+                  <form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
+                    <input type="hidden" name="tour_main_id" value="'.$row['id'].'">
                     <label>Название:</label><input type="text" name="tour_main_type" class="form-control" value="'.$row['tour_main_type'].'">
                     <label>Полное название:</label><input type="text" name="tour_main_title" class="form-control" value="'.$row['tour_main_title'].'">
                     <hr/>
                     <button class="btn btn-success">Сохранить</button>
-                </form>';
+                 </form>
+                 </div>
+                </div>';
+        return $form.$this->form_add_child($row['id']);
+    }
+
+    public function form_add_child($main_id, $parent_id = 0){
+        $title = ($main_id > 0)?"Добавить новый подпункт":"Добавить новый раздел";
+        $form = '<div class="panel panel-warning">
+                    <div class="panel-heading">'.$title.'</div>
+                  <div class="panel-body">
+                  <form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
+                    <input type="hidden" name="tour_main_id" value="'.$main_id.'">
+                    <input type="hidden" name="parent_id" value="'.$parent_id.'">
+                    <input type="hidden" name="oper" value="insert">
+                    <label>Название:</label><input type="text" name="tour_main_type" class="form-control" value="">';
+        $form .= ($main_id == 0)?'<label>Полное название:</label><input type="text" name="tour_main_title" class="form-control" value="">':'';
+        $form .= ($parent_id > 0)?'<label>Программа:</label>'.$this->grateSelect(0):'';
+        $form .= '  <hr/>
+                    <button class="btn btn-success">Добавить</button>
+                </form>
+                 </div>
+                </div>';
         return $form;
     }
 
     public function updMainTour($main_id,$main_type,$main_title){
         $sql = "UPDATE tc_tour_main_types SET tour_main_type = '$main_type', tour_main_title = '$main_title' WHERE id = $main_id";
+        return $this->query($sql);
+    }
+
+    public function insertSubTour($main_id, $parent_id, $sub_name, $id_program){
+        $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,parent_id, id_program) 
+                                      VALUES ('$sub_name', '$main_id', '$parent_id', '$id_program')";
+        return $this->query($sql);
+    }
+
+    public function insertMainTour($main_id,$main_type,$main_title){
+        if ($main_id > 0){
+            $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,parent_id) VALUES ('$main_type', '$main_id', 0)";
+        }else {
+            $sql = "INSERT INTO tc_tour_main_types (tour_main_type, tour_main_title) VALUES ('$main_type', '$main_title')";
+        }
         return $this->query($sql);
     }
 
@@ -1039,20 +1079,32 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
         }
         return $items;
     }
+    public function getSubTourParentName($id){
+        $sql = "SELECT st2.tour_sub_name FROM tc_tour_sub_types st1
+                LEFT JOIN tc_tour_sub_types st2 ON st1.parent_id = st2.id
+                WHERE st1.id = $id";
+        $this->query($sql);
+        return $this->getOne();
+    }
 
     public function getSubTour($id){
         $sql = "SELECT id, tour_sub_name, id_main_type, sort, id_program, parent_id FROM tc_tour_sub_types WHERE id = $id";
         $this->query($sql);
         $row = $this->fetchRowA();
-        $form = '<form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
+        $form = '<div class="panel panel-info">
+                    <div class="panel-heading">Редактировать подпункт</div>
+                  <div class="panel-body">
+                  <form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
                     <input type="hidden" name="tour_sub_id" class="form-control" value="'.$row['id'].'">
                     <label>Название:</label><input type="text" name="tour_sub_name" class="form-control" value="'.$row['tour_sub_name'].'">
                     <label>Программа:</label>'.$this->grateSelect($row['id_program']).'
                     <hr/>
                     <button name="oper" value="save" class="btn btn-success">Сохранить</button>
                     <button name="oper" value="delete" class="btn btn-danger" style="float: right">Удалить</button>
-                </form>';
-        return $form;
+                </form>
+                </div>
+                </div>';
+        return $form.$this->form_add_child($row['id_main_type'],$row['id']);
     }
 
     public function grateSelect($id_prog){
@@ -1304,7 +1356,10 @@ class tcProcess extends module_process
         if ($action == 'viewSiteTree'){
             $edited_node_name = '';
             $sub_act = $this->Vals->getVal('sub_act', 'GET', 'string');
-            if ($sub_act == 'edit') {
+            if ($sub_act == 'main_form'){
+                echo $this->nModel->form_add_child(0);
+                exit();
+            }elseif ($sub_act == 'edit') {
                 $sub_id = $this->Vals->getVal('sub', 'GET', 'integer');
                 $main_id = $this->Vals->getVal('main', 'GET', 'integer');
                 if ($sub_id > 0) {
@@ -1326,9 +1381,24 @@ class tcProcess extends module_process
                         $this->nModel->deleteMainTour($main_id);
                     }
                     if ($sub_id > 0) {
+                        $parent_name = $this->nModel->getSubTourParentName($sub_id);
+                        $edited_node_name = $parent_name;
                         $this->nModel->deleteSubTour($sub_id);
                     }
-                }else {
+                }elseif ($oper == 'insert'){
+                    if ($main_id > 0) {
+                        $parent_id = $this->Vals->getVal('parent_id', 'POST', 'integer');
+                        $main_type = $this->Vals->getVal('tour_main_type', 'POST', 'string');
+                        $main_title = $this->Vals->getVal('tour_main_title', 'POST', 'string');
+                        if ($parent_id > 0){
+                            $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
+                            $this->nModel->insertSubTour($main_id, $parent_id, $main_type, $id_program);
+                        }else {
+                            $this->nModel->insertMainTour($main_id, $main_type, $main_title);
+                        }
+                        $edited_node_name = $main_type;
+                    }
+                } else {
                     if ($main_id > 0) {
                         $main_type = $this->Vals->getVal('tour_main_type', 'POST', 'string');
                         $main_title = $this->Vals->getVal('tour_main_title', 'POST', 'string');

@@ -13,7 +13,7 @@
             </div>
         </div>
         <script>
-
+            get_main_form();
             var $searchableTree = $('#default-tree').treeview({
                 data: $('#sitetree').val(),
                 enableLinks: false,
@@ -23,8 +23,6 @@
                         var tur_settings = $('.tur_setting').html(data);
                         $(tur_settings).find('select').select2({enableFiltering: true});
                     });
-                    console.log(node);
-                    console.log(node.id);
                 }
             });
 
@@ -39,6 +37,13 @@
                 };
                 selectableNodes = $searchableTree.treeview('search', [ pattern, options ]);
                 $searchableTree.treeview('selectNode', [ selectableNodes, { silent: false }]);
+            }
+            function get_main_form(){
+                var url = '/tc/viewSiteTree-1/sub_act-main_form/';
+                $.get(url, function(data){
+                    var tur_settings = $('.tur_setting').html(data);
+                    $(tur_settings).find('select').select2({enableFiltering: true});
+                });
             }
         </script>
     </xsl:template>

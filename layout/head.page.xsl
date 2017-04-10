@@ -81,6 +81,7 @@ if ($('#edit_content').length){
 											<li><a href="/tc/">Туристы</a></li>
 											<li><a href="/tc/viewTur-1/">Туры</a></li>
 											<li><a href="/tc/viewStoryList-1/">Программы</a></li>
+											<li><a href="/tc/viewSiteTree-1/">Структура</a></li>
 											<li><a href="/tc/viewTurList-1/">Списки заказов</a></li>
 											<li><a href="/tc/dobList-1/">Дни рожденья</a></li>
 										</ul>
