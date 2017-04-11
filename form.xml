@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<module name="news"><container module="form"><formdata><form name="news" action="http://bltur.ru/news/update-11/" method="POST"><item id="edit" name="update" type="hidden"><value>11</value></item><item id="user_id" name="user_id" type="hidden"><value>11</value></item><item id="language" name="language" type="hidden"><value>ru</value></item><item id="date" name="time" className="" type="text" size="20"><label>Дата (ДД.ММ.ГГГГ)</label><value>19-03-2017</value></item><item id="title" name="title" className="" type="text" size="30"><label>Название новости</label><value></value></item><item id="" name="content" className="ckeditor" type="textarea" size="80"><label>Текст на главной</label><value><![CDATA[<p>В связи с повышенным спросом из районов Веселый - Ржевка &nbsp;и &nbsp;Гражданка - Просвещения поставлены дополнительные поездки в Лаппеенранту в субботу 08.04&nbsp;</p>
-
-<p>и во вторники (28.03, 11.04, 25.04, 23.05)</p>
-
-<p>А также по средам из Купчино ( 12.04, 17.05)</p>
-]]></value></item><item id="" name="subject" className="ckeditor" type="textarea" size="80"><label>Подробное описание</label><value><![CDATA[]]></value></item><item id="" name="submit" className="" type="submit"><value>сохранить</value></item></form></formdata></container></module>

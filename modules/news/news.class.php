@@ -23,6 +23,7 @@ class newsItem extends module_item {
   public $language;
   
   public $time;
+  public $target;
   public $noshow;
   public $prioritet;
   public $user_id;
@@ -36,6 +37,7 @@ class newsItem extends module_item {
     if (isset($Params['content'])) $this->content = $Params['content']; else $this->content = 0;
     if (isset($Params['language'])) $this->language = $Params['language']; else $this->language = 0;
     if (isset($Params['time'])) $this->time = $Params['time']; else $this->time = 0;
+    if (isset($Params['target'])) $this->target = $Params['target']; else $this->target = 0;
     if (isset($Params['noshow'])) $this->noshow = $Params['noshow']; else $this->noshow = 0;
     if (isset($Params['prioritet'])) $this->prioritet = $Params['prioritet']; else $this->prioritet = 0;
     if (isset($Params['user_id'])) $this->user_id = $Params['user_id']; else $this->user_id = 0;
@@ -51,6 +53,7 @@ class newsItem extends module_item {
     $Params['content'] = $this->content;
     $Params['language'] = $this->language;
     $Params['time'] = $this->time;
+    $Params['target'] = $this->target;
     $Params['noshow'] = $this->noshow;
     $Params['prioritet'] = $this->prioritet;
     $Params['user_id'] = $this->user_id;
@@ -93,9 +96,9 @@ class newsModel extends module_model {
 
     public function update(newsItem $item) {      
     	
-      $sql = 'UPDATE news SET `title` =  \'%2$s\', `content` = \'%3$s\', language= \'%4$s\',`time` = \'%5$s\',`subject` = \'%6$s\' WHERE id = \'%1$u\'';
+      $sql = 'UPDATE news SET `title` =  \'%2$s\', `content` = \'%3$s\', language= \'%4$s\',`time` = \'%5$s\',`target` = \'%6$s\',`subject` = \'%7$s\' WHERE id = \'%1$u\'';
     
-     $res = $this->query($sql, $item->id, $item->title, $item->content, $item->language, $item->time, $item->subject);
+     $res = $this->query($sql, $item->id, $item->title, $item->content, $item->language, $item->time, $item->target, $item->subject);
           
       return $res;
     }
@@ -162,7 +165,7 @@ class newsModel extends module_model {
       $sql = 'DELETE FROM news WHERE id=\'%1$u\'';
       $this->query($sql, $id);
       $pFile = new fileProcess($this->modSet->defModName, $id);
-      $pFile->update('delfile', $id);
+      $pFile->update('delfile');
     }
 /* *
  * @param $noshow
@@ -235,12 +238,6 @@ class newsModel extends module_model {
    //   	$news->files->add($file);
       	$collect->newsCount = $row['news_count'];
       }
-      /*
-      while ($row = $this->fetchRowA()){
-        $collect->addItem($row);
-        $this->Log->addToLog($row,__LINE__,__METHOD__);
-      }
-*/
       
       return $collect;
     }
@@ -314,11 +311,12 @@ class newsProcess extends module_process {
             $this->updated = true;
       }
         if ($action == 'add') {
-            /* свтавляем новость в БД */
+            /* вставляем новость в БД */
             $p = array();
             $p['title'] = $this->vals->getVal('title', 'POST');
             $p['content'] = $this->vals->getVal('content', 'POST') ;
             $p['language'] = $this->vals->getVal('language', 'POST') ;
+            $p['target'] = $this->vals->getVal('target', 'POST') ;
             $time = dateToTimestamp($this->vals->getVal('time', 'POST', 'string'));
             if (!$time) $time = date('Y-m-d H:i:s');
             else $time = date('Y-m-d H:i:s', $time);
@@ -369,7 +367,8 @@ class newsProcess extends module_process {
           $p['content'] = $this->vals->getVal('content', 'POST', 'string') ;
           $p['subject'] = $this->vals->getVal('subject', 'POST', 'string') ;
           $p['language'] = $this->vals->getVal('language', 'POST', 'string') ;
-          
+          $p['target'] = $this->vals->getVal('target', 'POST', 'string') ;
+
           $p['id'] = $this->vals->getVal('update', 'POST', 'integer');
           $time = dateToTimestamp($this->vals->getVal('time', 'POST', 'string'));
           if (!$time) $time = date('Y-m-d H:i:s');
@@ -417,7 +416,7 @@ class newsProcess extends module_process {
       if ($action == 'newsline') {
             /* показать список новостей */
             $limCount = $this->vals->getVal('count', 'get', 'integer');
-            if (!$limCount) $limCount = $this->vals->getModuleVal($this->modName, 'count', 'GET', 'integer');            
+            if (!$limCount) $limCount = $this->vals->getModuleVal($this->modName, 'count', 'GET');
             $page = $this->vals->getVal('page', 'GET', 'integer');
             
             if ($page <= 0  || $page === NULL) {
@@ -446,7 +445,7 @@ class newsProcess extends module_process {
       }
       if ($action == 'newsadmin') {
       	/* показать список новостей */
-      	$limCount = $this->vals->getModuleVal($this->modName, 'count', 'GET', 'int');
+      	$limCount = $this->vals->getModuleVal($this->modName, 'count', 'GET');
       	$collect = $this->nModel->getList(0,0,$limCount);
       	$this->nView->viewListAdmin($collect);
       	$this->updated = true;
@@ -478,7 +477,7 @@ class newsProcess extends module_process {
       if (!$this->updated) {      	
         //$limCount = $this->vals->getVal('count', 'get', 'int');
         $limCount = $this->vals->getVal('count', 'get', 'integer');
-        if (!$limCount) $limCount = $this->vals->getModuleVal($this->modName, 'count', 'get', 'integer');
+        if (!$limCount) $limCount = $this->vals->getModuleVal($this->modName, 'count', 'get');
         $page = $this->vals->getVal('page', 'GET', 'integer');
         if ($page <= 0 || $page == NULL) {
         	$this->Vals->setValTo('page','1','GET');
@@ -491,25 +490,6 @@ class newsProcess extends module_process {
       }
 
     }
-/*
-    public function getBody($data_type = 'xml') {
-      if ($data_type == 'xml') return $this->nView->getBody();
-      if ($data_type == 'html') {
-        $this->Log->addToLog('pXSL '.$this->nView->pXSL, __LINE__, __METHOD__);
-        $data = '';
-        if (!$this->nView->pXSL) {
-          $this->Log->addError('Не найден путь к XSL ('. $this->nView->pXSL.')', __LINE__, __METHOD__);
-          return false;
-        }
-        $doc = new DOMDocument();
-        $xsl = new XSLTProcessor();
-        $doc->load($this->nView->pXSL);
-        $xsl->importStyleSheet($doc);
-        $res = $xsl->transformToDoc($this->nView->getBody());
-        $data = $res->saveHTML();
-        return $data;
-      }
-    }  */
 }
 
 class newsView extends module_view {
@@ -526,9 +506,9 @@ class newsView extends module_view {
       $form->addHidden('add', '1', 'add');
       $form->addHidden('user_id', $user_id, 'user_id');
       $form->addButton('button', '     Вернуться', '', 'BackToAdmin');
-     // $form->addSelect('language','ru','Язык','','','','','');
-     // $form->addOption('en','en','English','language','','','');
-     // $form->addOption('ru','ru','Русский','language','','','');	 
+      $form->addSelect('target','ru','Тип новости','','','','','');
+      $form->addOption('1','1','Наши новости','target','','','');
+      $form->addOption('2','2','Туризма','target','','','');
 	  $form->addHidden('language', 'ru', 'language');
       $form->addText('time',  date('d.m.Y'),'Дата (ДД.ММ.ГГГГ)', 'date', '', 20);
       $form->addText('title', '','Название новости', 'title', '', 30);
@@ -555,9 +535,10 @@ class newsView extends module_view {
       $form = new CFormGenerator('news', SITE_ROOT.$this->modName.'/update-'.$item->id.'/', 'POST', 0);
       $form->addHidden('update', $item->id, 'edit');
       $form->addHidden('user_id', $user_id, 'user_id');
-	  $form->addButton('button', '     Вернуться', '', 'BackToAdmin'); 
-	//  $form->addSelect('language','ru','Язык','','','','','');
-	//  $form->addOption('ru','ru','Русский','language','','','');
+	  $form->addButton('button', '     Вернуться', '', 'BackToAdmin');
+        $form->addSelect('target',$item->target,'Тип новости','','','','','');
+        $form->addOption('1','1','Наши новости','target','','','');
+        $form->addOption('2','2','Туризма','target','','','');
 	  $form->addHidden('language', 'ru', 'language');
       $date = $item->time;
       $form->addText('time',$date,'Дата (ДД.ММ.ГГГГ)', 'date', '', 20);
@@ -574,7 +555,7 @@ class newsView extends module_view {
       $form->addSubmit('submit', 'сохранить', '', '');
       $form->getBody($Container,'xml'); // $this->xml = $form->getBody('xml');
       
-      $this->xml->save('form.xml');
+//      $this->xml->save('form.xml');
       return $form;
     }
 

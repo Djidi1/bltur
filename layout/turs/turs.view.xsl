@@ -28,6 +28,7 @@
                         <!-- НОВОСТИ -->
                         <div class="comment-list">
                             <xsl:call-template name="newsListIndex"/>
+                            <xsl:call-template name="tnewsListIndex"/>
                         </div>
                         <!-- КОНЕЦ НОВОСТЕЙ -->
                         <!--
@@ -107,6 +108,12 @@
                             </div>
                         </div>
                     </div>
+                    <xsl:if test="count(fire/item) > 0">
+                        <xsl:call-template name="fireListIndex"/>
+                    </xsl:if>
+                    <xsl:if test="count(promo/item) > 0">
+                        <xsl:call-template name="promoListIndex"/>
+                    </xsl:if>
                 </div>
                 <div class="col-md-4">
                     <div class="panel panel-info">
@@ -244,7 +251,7 @@
     <xsl:template name="newsListIndex">
         <div class="panel panel-info arrow left small ">
             <div class="panel-heading">
-                <h3 class="panel-title">Новости</h3>
+                <h3 class="panel-title">Наши новости</h3>
             </div>
             <div class="panel-body">
                 <xsl:for-each select="news/item">
@@ -275,6 +282,364 @@
                     </xsl:if>
                     <hr/>
                 </xsl:for-each>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="tnewsListIndex">
+        <div class="panel panel-info arrow left small ">
+            <div class="panel-heading">
+                <h3 class="panel-title">Новости туризма</h3>
+            </div>
+            <div class="panel-body">
+                <xsl:for-each select="tnews/item">
+                    <header class="text-left">
+                        <span class="label label-info" style="float: right;">
+                            <time class="comment-date" datetime="{time}">
+                                <i class="fa fa-clock-o"/>
+                                <xsl:text> </xsl:text><xsl:value-of select="time"/>
+                            </time>
+                        </span>
+                        <div class="comment-user">
+                            <i class="fa fa-newspaper-o"/>
+                            <xsl:text> </xsl:text>
+                            <strong>
+                                <xsl:value-of select="title"/>
+                            </strong>
+                        </div>
+                    </header>
+                    <div class="comment-post">
+                        <xsl:value-of select="content" disable-output-escaping="yes"/>
+                    </div>
+                    <xsl:if test="subject != ''">
+                        <p class="text-right" style="margin: 0;">
+                            <a href="/news/view-{id}/" class="btn btn-warning btn-xs">Подробнее<xsl:text> </xsl:text>
+                                <i class="fa fa-share"/>
+                            </a>
+                        </p>
+                    </xsl:if>
+                    <hr/>
+                </xsl:for-each>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="fireListIndex">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">Горящие туры</h3>
+            </div>
+            <div id="viewListlang" class="panel-body">
+                <table width="100%" class="table table-striped table-condensed table-hover" style="font-size: 11px;">
+                    <tbody>
+                        <xsl:for-each select="fire/item">
+                            <tr>
+                                <td colspan="5">
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                       onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
+                                       style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
+                                        <xsl:value-of select="tur_name"/>
+                                        <br/>
+                                        <i style="color:#a94442">
+                                            <xsl:value-of select="dop_info"/>
+                                        </i>
+                                    </a>
+                                    <div class="overview" style="display:none;">
+                                        <a href="#" onclick="printBlock('print_data_{position()}')"
+                                           class="btn btn-info glyphicon glyphicon-print"
+                                           style="width: initial;float: right;"/>
+                                        <div id="print_data_{position()}" class="printBlock">
+                                            <xsl:value-of select="overview" disable-output-escaping="yes"/>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">
+                                    <xsl:if test="tur_transport = 1">
+                                        <i class="fa fa-bus text-warning" title="Автобус"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 2">
+                                        <i class="fa fa-bus text-warning" title="Автобус и Паром"/>
+                                        <i class="fa fa-ship text-info" title="Автобус и Паром"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 3">
+                                        <i class="fa fa-train text-success" title="Поезд"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 4">
+                                        <i class="fa fa-plane text-danger" title="Самолет"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 5">
+                                        <i class="fa fa-ship text-info" title="Паром"/>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:if test="comment != ''">
+                                        <div class="btn btn-danger btn-xs" title="{comment}">
+                                            <xsl:attribute name="onclick">
+                                                var text = '<xsl:value-of select="comment_alert"/>';
+                                                <![CDATA[
+												bootbox.alert(text);
+												]]>
+                                            </xsl:attribute>
+                                            <span class="glyphicon glyphicon-info-sign"/>
+                                        </div>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:value-of select="tur_date"/>
+                                    <xsl:if test="days > 1">
+                                        (<xsl:value-of select="days"/>)
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:if test="turists = 0 and bus_size &gt;= 1">
+                                        <b class="text-success">места есть</b>
+                                    </xsl:if>
+                                    <xsl:if test="turists > 0 and turists &lt; bus_size">
+                                        <b class="text-info">осталось
+                                            <xsl:value-of select="bus_size - number(turists)"/>
+                                        </b>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size and days=1">
+                                        <b class="text-danger">лист ожидания</b>
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:value-of select="tur_cost"/><xsl:text> </xsl:text>
+                                    <xsl:if test="tur_cost_curr = 'руб.'">
+                                        <i class="fa fa-rub" title="Рубли"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_cost_curr = 'у.е.'">
+                                        <i class="fa fa-eur" title="у.е."/>
+                                    </xsl:if>
+                                    <br/>
+                                    <xsl:if test="turists &lt; bus_size">
+                                        <a href="#" title="Подать заявку" class="btn btn-success btn-xs"
+                                           onclick="open_dialog('/turs/order-{id}/','Забронировать',520,550); return false;">
+                                            Забронировать
+                                        </a>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size">
+                                        <b class="text-primary">По запросу</b>
+                                    </xsl:if>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="promoListIndex">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h3 class="panel-title">Акционные туры</h3>
+            </div>
+            <div id="viewListlang" class="panel-body">
+                <table width="100%" class="table table-striped table-condensed table-hover" style="font-size: 11px;">
+                    <tbody>
+                        <xsl:for-each select="promo/item">
+                            <tr>
+                                <td colspan="5">
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                       onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
+                                       style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
+                                        <xsl:value-of select="tur_name"/>
+                                        <br/>
+                                        <i style="color:#a94442">
+                                            <xsl:value-of select="dop_info"/>
+                                        </i>
+                                    </a>
+                                    <div class="overview" style="display:none;">
+                                        <a href="#" onclick="printBlock('print_data_{position()}')"
+                                           class="btn btn-info glyphicon glyphicon-print"
+                                           style="width: initial;float: right;"/>
+                                        <div id="print_data_{position()}" class="printBlock">
+                                            <xsl:value-of select="overview" disable-output-escaping="yes"/>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">
+                                    <xsl:if test="tur_transport = 1">
+                                        <i class="fa fa-bus text-warning" title="Автобус"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 2">
+                                        <i class="fa fa-bus text-warning" title="Автобус и Паром"/>
+                                        <i class="fa fa-ship text-info" title="Автобус и Паром"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 3">
+                                        <i class="fa fa-train text-success" title="Поезд"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 4">
+                                        <i class="fa fa-plane text-danger" title="Самолет"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 5">
+                                        <i class="fa fa-ship text-info" title="Паром"/>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:if test="comment != ''">
+                                        <div class="btn btn-danger btn-xs" title="{comment}">
+                                            <xsl:attribute name="onclick">
+                                                var text = '<xsl:value-of select="comment_alert"/>';
+                                                <![CDATA[
+												bootbox.alert(text);
+												]]>
+                                            </xsl:attribute>
+                                            <span class="glyphicon glyphicon-info-sign"/>
+                                        </div>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:value-of select="tur_date"/>
+                                    <xsl:if test="days > 1">
+                                        (<xsl:value-of select="days"/>)
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:if test="turists = 0 and bus_size &gt;= 1">
+                                        <b class="text-success">места есть</b>
+                                    </xsl:if>
+                                    <xsl:if test="turists > 0 and turists &lt; bus_size">
+                                        <b class="text-info">осталось
+                                            <xsl:value-of select="bus_size - number(turists)"/>
+                                        </b>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size and days=1">
+                                        <b class="text-danger">лист ожидания</b>
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:value-of select="tur_cost"/><xsl:text> </xsl:text>
+                                    <xsl:if test="tur_cost_curr = 'руб.'">
+                                        <i class="fa fa-rub" title="Рубли"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_cost_curr = 'у.е.'">
+                                        <i class="fa fa-eur" title="у.е."/>
+                                    </xsl:if>
+                                    <br/>
+                                    <xsl:if test="turists &lt; bus_size">
+                                        <a href="#" title="Подать заявку" class="btn btn-success btn-xs"
+                                           onclick="open_dialog('/turs/order-{id}/','Забронировать',520,550); return false;">
+                                            Забронировать
+                                        </a>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size">
+                                        <b class="text-primary">По запросу</b>
+                                    </xsl:if>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </xsl:template>
+    <xsl:template name="partyListIndex">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Праздничные туры</h3>
+            </div>
+            <div id="viewListlang" class="panel-body">
+                <table width="100%" class="table table-striped table-condensed table-hover" style="font-size: 11px;">
+                    <tbody>
+                        <xsl:for-each select="party/item">
+                            <tr>
+                                <td colspan="5">
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                       onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
+                                       style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
+                                        <xsl:value-of select="tur_name"/>
+                                        <br/>
+                                        <i style="color:#a94442">
+                                            <xsl:value-of select="dop_info"/>
+                                        </i>
+                                    </a>
+                                    <div class="overview" style="display:none;">
+                                        <a href="#" onclick="printBlock('print_data_{position()}')"
+                                           class="btn btn-info glyphicon glyphicon-print"
+                                           style="width: initial;float: right;"/>
+                                        <div id="print_data_{position()}" class="printBlock">
+                                            <xsl:value-of select="overview" disable-output-escaping="yes"/>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="white-space: nowrap;">
+                                    <xsl:if test="tur_transport = 1">
+                                        <i class="fa fa-bus text-warning" title="Автобус"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 2">
+                                        <i class="fa fa-bus text-warning" title="Автобус и Паром"/>
+                                        <i class="fa fa-ship text-info" title="Автобус и Паром"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 3">
+                                        <i class="fa fa-train text-success" title="Поезд"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 4">
+                                        <i class="fa fa-plane text-danger" title="Самолет"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_transport = 5">
+                                        <i class="fa fa-ship text-info" title="Паром"/>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:if test="comment != ''">
+                                        <div class="btn btn-danger btn-xs" title="{comment}">
+                                            <xsl:attribute name="onclick">
+                                                var text = '<xsl:value-of select="comment_alert"/>';
+                                                <![CDATA[
+												bootbox.alert(text);
+												]]>
+                                            </xsl:attribute>
+                                            <span class="glyphicon glyphicon-info-sign"/>
+                                        </div>
+                                    </xsl:if>
+                                </td>
+                                <td>
+                                    <xsl:value-of select="tur_date"/>
+                                    <xsl:if test="days > 1">
+                                        (<xsl:value-of select="days"/>)
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:if test="turists = 0 and bus_size &gt;= 1">
+                                        <b class="text-success">места есть</b>
+                                    </xsl:if>
+                                    <xsl:if test="turists > 0 and turists &lt; bus_size">
+                                        <b class="text-info">осталось
+                                            <xsl:value-of select="bus_size - number(turists)"/>
+                                        </b>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size and days=1">
+                                        <b class="text-danger">лист ожидания</b>
+                                    </xsl:if>
+                                </td>
+                                <td style="text-align:center">
+                                    <xsl:value-of select="tur_cost"/><xsl:text> </xsl:text>
+                                    <xsl:if test="tur_cost_curr = 'руб.'">
+                                        <i class="fa fa-rub" title="Рубли"/>
+                                    </xsl:if>
+                                    <xsl:if test="tur_cost_curr = 'у.е.'">
+                                        <i class="fa fa-eur" title="у.е."/>
+                                    </xsl:if>
+                                    <br/>
+                                    <xsl:if test="turists &lt; bus_size">
+                                        <a href="#" title="Подать заявку" class="btn btn-success btn-xs"
+                                           onclick="open_dialog('/turs/order-{id}/','Забронировать',520,550); return false;">
+                                            Забронировать
+                                        </a>
+                                    </xsl:if>
+                                    <xsl:if test="turists >= bus_size">
+                                        <b class="text-primary">По запросу</b>
+                                    </xsl:if>
+                                </td>
+                            </tr>
+                        </xsl:for-each>
+                    </tbody>
+                </table>
             </div>
         </div>
     </xsl:template>
