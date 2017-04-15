@@ -89,7 +89,7 @@
                     <xsl:if test="count(news/item) = 0">
                         <xsl:attribute name="class">col-md-8</xsl:attribute>
                     </xsl:if>
-                    <div class="panel panel-primary">
+                    <div class="panel panel-info">
                         <div class="panel-heading">
                             <h3 class="panel-title">
                                 Выберите направление
@@ -102,7 +102,9 @@
                                         <xsl:if test="id_main_type > 0">
                                             <xsl:attribute name="href">/turs/sub_type-<xsl:value-of select="id"/></xsl:attribute>
                                         </xsl:if>
-                                        <xsl:value-of select="btn_name"/>
+                                        <span>
+                                            <xsl:value-of select="btn_name"/>
+                                        </span>
                                     </a>
                                 </xsl:for-each>
                             </div>

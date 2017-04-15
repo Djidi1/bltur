@@ -12,7 +12,22 @@
 }
 .breadcrumb>li:last-child { font-weight: bold; }
 .breadcrumb>li { margin: 0; }
-.box-container a.btn.btn-lg {  margin: 0 4px 8px 4px;}
+
+.box-container a.btn.btn-lg {
+  margin: 0 4px 12px 4px;
+  width: 31%;
+  white-space: pre-wrap;
+  height: 76px;
+  max-height: 76px;
+  overflow: hidden;
+  display: table;
+  font-size: 14px;
+}
+.box-container a.btn.btn-lg span {
+  display: table-cell;
+  font-weight: bold;
+  vertical-align: middle;
+}
 .ya-site-form__input-text {
   display: block;
   width: 100%;

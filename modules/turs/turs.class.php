@@ -173,7 +173,8 @@ class siteModel extends module_model {
         $sql = 'SELECT id, tour_main_type btn_name, sort, dk FROM tc_tour_main_types';
         $this->query($sql);
         $items = array();
-        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+//        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+        $btn_style = array('btn-primary','btn-primary','btn-primary','btn-primary','btn-primary');
         $i = 0;
         while(($row = $this->fetchRowA())!==false) {
             $row['btn-style'] = $btn_style[$i];
@@ -184,13 +185,14 @@ class siteModel extends module_model {
     }
     public function getTourSubTypes($id,$id_sub) {
 	    if ($id_sub > 0){
-            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE parent_id = $id_sub";
+            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE parent_id = $id_sub ORDER BY tour_sub_name";
         }else {
-            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE id_main_type = $id";
+            $sql = "SELECT id, tour_sub_name btn_name, id_main_type, sort, dk FROM tc_tour_sub_types WHERE id_main_type = $id ORDER BY tour_sub_name";
         }
         $this->query($sql);
         $items = array();
-        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+//        $btn_style = array('btn-success','btn-warning','btn-info','btn-primary','btn-danger');
+        $btn_style = array('btn-primary','btn-primary','btn-primary','btn-primary','btn-primary');
         $i = 0;
         while(($row = $this->fetchRowA())!==false) {
             $row['btn-style'] = $btn_style[$i];
