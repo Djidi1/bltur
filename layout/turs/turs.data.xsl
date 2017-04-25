@@ -10,9 +10,9 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="box-container">
-                        <div class="panel panel-info" style="width:100%">
+                        <div class="panel panel-primary" style="width:100%">
                             <!-- Default panel contents -->
-                            <div class="panel-heading">Программа тура</div>
+                            <div class="panel-heading"><h3 class="panel-title">Программа тура</h3></div>
                             <div class="panel-body">
                                 <xsl:value-of select="item/overview" disable-output-escaping="yes"/>
                             </div>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <a href="/turs/viewTur-1/" title="Подбор тура..." class="btn btn-warning btn-xs"
                                style="color: #fff;width: 100px;float: right;">Подбор тура
@@ -156,7 +156,7 @@
     </xsl:template>
     <!-- НОВОСТИ НА ГЛАВНОЙ -->
     <xsl:template name="newsListIndex">
-        <div class="panel panel-info arrow left small ">
+        <div class="panel panel-primary arrow left small ">
             <div class="panel-heading">
                 <h3 class="panel-title">Новости</h3>
             </div>

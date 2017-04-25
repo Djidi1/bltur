@@ -315,6 +315,7 @@ class newsProcess extends module_process {
             $p = array();
             $p['title'] = $this->vals->getVal('title', 'POST');
             $p['content'] = $this->vals->getVal('content', 'POST') ;
+            $p['subject'] = $this->vals->getVal('subject', 'POST', 'string') ;
             $p['language'] = $this->vals->getVal('language', 'POST') ;
             $p['target'] = $this->vals->getVal('target', 'POST') ;
             $time = dateToTimestamp($this->vals->getVal('time', 'POST', 'string'));

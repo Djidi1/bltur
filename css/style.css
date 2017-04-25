@@ -15,13 +15,22 @@
 
 .box-container a.btn.btn-lg {
   margin: 0 4px 12px 4px;
-  width: 31%;
+  width: 23%;
+  padding: 0;
   white-space: pre-wrap;
   height: 76px;
   max-height: 76px;
   overflow: hidden;
   display: table;
   font-size: 14px;
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+}
+.box-container a.btn.btn-lg:hover {
+  color: #315473;
+  background-color: #c5d9e3;
+  border-color: #a9d4dd;
 }
 .box-container a.btn.btn-lg span {
   display: table-cell;
@@ -76,7 +85,9 @@ div#form_login {max-width: 300px;float: right;margin-left: 25px;border: 1px soli
 li {  margin-left: 30px;}
 #header li {  margin-left: 0;}
 a.btn.btn-info.fire1 {background: url(/images/bigFire.gif) no-repeat 100% 50% #5bc0de;padding-right: 40px;}
-     
+a.btn.btn-info.sale1 {background: url(/images/sale.png) no-repeat 100% 50% #5bc0de;padding-right: 40px;}
+a.btn.btn-info.party1 {background: url(/images/party.png) no-repeat 100% 50% #5bc0de;padding-right: 40px;}
+
 tr.refused td {color: red;text-decoration: line-through;}
    
 .largeWidth {    margin: 0 auto;    width: 90% !important;}

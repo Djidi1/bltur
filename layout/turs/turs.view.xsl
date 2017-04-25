@@ -32,7 +32,7 @@
                         </div>
                         <!-- КОНЕЦ НОВОСТЕЙ -->
                         <!--
-                        <div class="panel panel-info">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <h3 class="panel-title">ДОБРО ПОЖАЛОВАТЬ НА САЙТ "Балтик Лайнс Тур"!</h3>
                             </div>
@@ -89,7 +89,7 @@
                     <xsl:if test="count(news/item) = 0">
                         <xsl:attribute name="class">col-md-8</xsl:attribute>
                     </xsl:if>
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">
                                 Выберите направление
@@ -118,7 +118,7 @@
                     </xsl:if>
                 </div>
                 <div class="col-md-4">
-                    <div class="panel panel-info">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
                             <a href="/turs/viewTur-1/" title="Подбор тура..." class="btn btn-warning btn-xs"
                                style="color: #fff;width: 100px;float: right;">Подбор тура
@@ -179,7 +179,7 @@
                                                 </xsl:if>
                                             </td>
                                             <td>
-                                                <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                                <a href="#" title="Описание тура" class="btn btn-info fire{fire} sale{sale} party{party}"
                                                    onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
                                                    style="max-width:340px;text-align:left;white-space:normal;font-size: 12px;">
                                                     <xsl:value-of select="tur_name"/>
@@ -251,7 +251,7 @@
     </xsl:template>
     <!-- НОВОСТИ НА ГЛАВНОЙ -->
     <xsl:template name="newsListIndex">
-        <div class="panel panel-info arrow left small ">
+        <div class="panel panel-primary arrow left small ">
             <div class="panel-heading">
                 <h3 class="panel-title">Наши новости</h3>
             </div>
@@ -288,7 +288,7 @@
         </div>
     </xsl:template>
     <xsl:template name="tnewsListIndex">
-        <div class="panel panel-info arrow left small ">
+        <div class="panel panel-primary arrow left small ">
             <div class="panel-heading">
                 <h3 class="panel-title">Новости туризма</h3>
             </div>
@@ -335,7 +335,7 @@
                         <xsl:for-each select="fire/item">
                             <tr>
                                 <td colspan="5">
-                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire} sale{sale} party{party}"
                                        onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
                                        style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
                                         <xsl:value-of select="tur_name"/>
@@ -442,7 +442,7 @@
                         <xsl:for-each select="promo/item">
                             <tr>
                                 <td colspan="5">
-                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire} sale{sale} party{party}"
                                        onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
                                        style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
                                         <xsl:value-of select="tur_name"/>
@@ -549,7 +549,7 @@
                         <xsl:for-each select="party/item">
                             <tr>
                                 <td colspan="5">
-                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire}"
+                                    <a href="#" title="Описание тура" class="btn btn-info fire{fire} sale{sale} party{party}"
                                        onclick="var data = $(this).parent().find('.overview').html(); open_text(data,'Описание тура'); return false;"
                                        style="width:100%;text-align:left;white-space:normal;font-size: 11px;">
                                         <xsl:value-of select="tur_name"/>

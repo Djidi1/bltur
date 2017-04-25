@@ -3,12 +3,17 @@
         <form action="" method="post" class="row">
             <input type="hidden" name="id_program" value="{item/id}"/>
             <div class="form-group">
-                <label>Заголовок
+                <label style="width: 100%;">Заголовок
                     <input type="text" name="name" class="form-control" value="{item/name}"/>
                 </label>
             </div>
             <div class="form-group">
-                <label>Страна
+                <label style="width: 100%;">Город
+                    <input type="text" name="city" class="form-control" value="{item/city}"/>
+                </label>
+            </div>
+            <div class="form-group">
+                <label style="width: 100%;">Страна
                     <input type="text" name="country" class="form-control" value="{item/country}"/>
                 </label>
             </div>

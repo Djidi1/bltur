@@ -707,13 +707,13 @@ class tcModel extends module_model
 
     public function getProgram($id)
     {
-        $sql = "SELECT id, name, date, overview, country FROM tc_programs WHERE id = $id";
+        $sql = "SELECT id, name, date, overview, country, city FROM tc_programs WHERE id = $id";
         $this->query($sql);
         return $this->fetchRowA();
     }
     public function getPrograms()
     {
-        $sql = "SELECT id, name, country FROM tc_programs ORDER BY name";
+        $sql = "SELECT id, name, country, city FROM tc_programs ORDER BY name";
         $this->query($sql);
         $items = array();
         while (($row = $this->fetchRowA()) !== false) {
@@ -721,18 +721,19 @@ class tcModel extends module_model
         }
         return $items;
     }
-    public function updProgram($id_program,$name,$country,$overview)
+    public function updProgram($id_program,$name,$country,$city,$overview)
     {
-        $overview = htmlentities($overview);
+        $overview = str_replace('%','%%', $overview);
+        $overview = htmlentities(htmlspecialchars($overview));
         $date = date('Y-m-d');
-        $sql = "UPDATE tc_programs SET name='$name', country='$country', overview='$overview', date='$date' WHERE id = $id_program";
+        $sql = "UPDATE tc_programs SET name='$name', country='$country',city='$city', overview='$overview', date='$date' WHERE id = $id_program";
         $this->query($sql);
         return $this->affectedRows();
     }
 
     public function getStoryList()
     {
-        $sql = 'SELECT id, name, date, overview, country FROM tc_programs';
+        $sql = 'SELECT id, name, date, overview, country, city FROM tc_programs';
         $this->query($sql);
         $items = array();
         while (($row = $this->fetchRowA()) !== false) {
@@ -762,7 +763,8 @@ class tcModel extends module_model
                   ttst.id_program 
                 FROM tc_tour_sub_types ttst 
                 LEFT JOIN tc_tour_main_types ttmt ON ttst.id_main_type = ttmt.id
-                WHERE ttst.id_program > 0';
+                WHERE ttst.id_program > 0
+                ORDER BY ttmt.sort, ttst.sort';
         $this->query($sql);
         $items = array();
         while (($row = $this->fetchRowA()) !== false) {
@@ -1018,8 +1020,10 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
                     <input type="hidden" name="tour_main_id" value="'.$row['id'].'">
                     <label>Название:</label><input type="text" name="tour_main_type" class="form-control" value="'.$row['tour_main_type'].'">
                     <label>Полное название:</label><input type="text" name="tour_main_title" class="form-control" value="'.$row['tour_main_title'].'">
+                    <label>Номер по порядку:</label><input type="text" name="sort" class="form-control" value="'.$row['sort'].'">
                     <hr/>
-                    <button class="btn btn-success">Сохранить</button>
+                    <button name="oper" value="save" class="btn btn-success">Сохранить</button>
+                    <button name="oper" value="delete" class="btn btn-danger" style="float: right">Удалить</button>
                  </form>
                  </div>
                 </div>';
@@ -1037,6 +1041,7 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
                     <input type="hidden" name="oper" value="insert">
                     <label>Название:</label><input type="text" name="tour_main_type" class="form-control" value="">';
         $form .= ($main_id == 0)?'<label>Полное название:</label><input type="text" name="tour_main_title" class="form-control" value="">':'';
+        $form .= ($main_id == 0)?'<label>Номер по порядку:</label><input type="text" name="sort" class="form-control" value="">':'';
         $form .= ($parent_id > 0)?'<label>Программа:</label>'.$this->grateSelect(0):'';
         $form .= '  <hr/>
                     <button class="btn btn-success">Добавить</button>
@@ -1046,28 +1051,28 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
         return $form;
     }
 
-    public function updMainTour($main_id,$main_type,$main_title){
-        $sql = "UPDATE tc_tour_main_types SET tour_main_type = '$main_type', tour_main_title = '$main_title' WHERE id = $main_id";
+    public function updMainTour($main_id,$main_type,$main_title, $sort){
+        $sql = "UPDATE tc_tour_main_types SET tour_main_type = '$main_type', tour_main_title = '$main_title', sort = '$sort' WHERE id = $main_id";
         return $this->query($sql);
     }
 
-    public function insertSubTour($main_id, $parent_id, $sub_name, $id_program){
-        $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,parent_id, id_program) 
-                                      VALUES ('$sub_name', '$main_id', '$parent_id', '$id_program')";
+    public function insertSubTour($main_id, $parent_id, $sub_name, $id_program, $sort){
+        $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,parent_id, id_program, sort) 
+                                      VALUES ('$sub_name', '$main_id', '$parent_id', '$id_program', '$sort')";
         return $this->query($sql);
     }
 
-    public function insertMainTour($main_id,$main_type,$main_title){
+    public function insertMainTour($main_id,$main_type,$main_title, $sort){
         if ($main_id > 0){
-            $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,parent_id) VALUES ('$main_type', '$main_id', 0)";
+            $sql = "INSERT INTO tc_tour_sub_types (tour_sub_name,id_main_type,sort,parent_id) VALUES ('$main_type', '$main_id', '$sort', 0)";
         }else {
-            $sql = "INSERT INTO tc_tour_main_types (tour_main_type, tour_main_title) VALUES ('$main_type', '$main_title')";
+            $sql = "INSERT INTO tc_tour_main_types (tour_main_type, tour_main_title, sort) VALUES ('$main_type', '$main_title', '$sort')";
         }
         return $this->query($sql);
     }
 
     public function getMainTours(){
-        $sql = 'SELECT ttmt.id, ttmt.tour_main_type as text FROM tc_tour_main_types ttmt';
+        $sql = 'SELECT ttmt.id, ttmt.tour_main_type as text FROM tc_tour_main_types ttmt ORDER BY ttmt.sort';
         $this->query($sql);
         $items = array();
         while(($row = $this->fetchRowA())!==false) {
@@ -1088,7 +1093,7 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
     }
 
     public function getSubTour($id){
-        $sql = "SELECT id, tour_sub_name, id_main_type, sort, id_program, parent_id FROM tc_tour_sub_types WHERE id = $id";
+        $sql = "SELECT id, tour_sub_name, id_main_type, sort, id_program, parent_id FROM tc_tour_sub_types WHERE id = $id ORDER BY sort";
         $this->query($sql);
         $row = $this->fetchRowA();
         $form = '<div class="panel panel-info">
@@ -1097,6 +1102,7 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
                   <form action="/tc/viewSiteTree-1/sub_act-upd/" method="post">
                     <input type="hidden" name="tour_sub_id" class="form-control" value="'.$row['id'].'">
                     <label>Название:</label><input type="text" name="tour_sub_name" class="form-control" value="'.$row['tour_sub_name'].'">
+                    <label>Номер по порядку:</label><input type="text" name="sort" class="form-control" value="'.$row['sort'].'">
                     <label>Программа:</label>'.$this->grateSelect($row['id_program']).'
                     <hr/>
                     <button name="oper" value="save" class="btn btn-success">Сохранить</button>
@@ -1117,8 +1123,8 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
         return "<select class='form-control' name='id_program'>".$opt."</select>";
     }
 
-    public function updSubTour($sub_id,$sub_name,$id_program){
-        $sql = "UPDATE tc_tour_sub_types SET tour_sub_name = '$sub_name', id_program = '$id_program' WHERE id = $sub_id";
+    public function updSubTour($sub_id,$sub_name,$id_program, $sort){
+        $sql = "UPDATE tc_tour_sub_types SET tour_sub_name = '$sub_name', id_program = '$id_program', sort = '$sort' WHERE id = $sub_id";
         return $this->query($sql);
     }
     public function deleteSubTour($id){
@@ -1130,11 +1136,12 @@ LEFT JOIN tc_countrys tc ON tt.country = tc.id
         return $this->query($sql);
     }
     public function getSubTours($id_main_type){
-        $sql = "SELECT id, tour_sub_name as text, parent_id FROM tc_tour_sub_types WHERE id_main_type = $id_main_type";
+        $sql = "SELECT id, tour_sub_name as text, parent_id,sort FROM tc_tour_sub_types WHERE id_main_type = $id_main_type ORDER BY sort desc";
         $this->query($sql);
         $items = array();
         while(($row = $this->fetchRowA())!==false) {
             $row['type'] = 'sub';
+            $row['text'] = $row['text'].' '.$row['sort'];
             $items[$row['id']] = $row;
         }
         $result_array = $this->buildTree($items, $parentId = 0);
@@ -1386,29 +1393,32 @@ class tcProcess extends module_process
                         $this->nModel->deleteSubTour($sub_id);
                     }
                 }elseif ($oper == 'insert'){
-                    if ($main_id > 0) {
+//                    if ($main_id > 0) {
                         $parent_id = $this->Vals->getVal('parent_id', 'POST', 'integer');
                         $main_type = $this->Vals->getVal('tour_main_type', 'POST', 'string');
                         $main_title = $this->Vals->getVal('tour_main_title', 'POST', 'string');
+                        $sort = $this->Vals->getVal('sort', 'POST', 'string');
                         if ($parent_id > 0){
                             $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
-                            $this->nModel->insertSubTour($main_id, $parent_id, $main_type, $id_program);
+                            $this->nModel->insertSubTour($main_id, $parent_id, $main_type, $id_program, $sort);
                         }else {
-                            $this->nModel->insertMainTour($main_id, $main_type, $main_title);
+                            $this->nModel->insertMainTour($main_id, $main_type, $main_title, $sort);
                         }
                         $edited_node_name = $main_type;
-                    }
+//                    }
                 } else {
                     if ($main_id > 0) {
                         $main_type = $this->Vals->getVal('tour_main_type', 'POST', 'string');
                         $main_title = $this->Vals->getVal('tour_main_title', 'POST', 'string');
-                        $this->nModel->updMainTour($main_id, $main_type, $main_title);
+                        $sort = $this->Vals->getVal('sort', 'POST', 'string');
+                        $this->nModel->updMainTour($main_id, $main_type, $main_title, $sort);
                         $edited_node_name = $main_type;
                     }
                     if ($sub_id > 0) {
                         $sub_name = $this->Vals->getVal('tour_sub_name', 'POST', 'string');
                         $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
-                        $this->nModel->updSubTour($sub_id, $sub_name, $id_program);
+                        $sort = $this->Vals->getVal('sort', 'POST', 'string');
+                        $this->nModel->updSubTour($sub_id, $sub_name, $id_program, $sort);
                         $edited_node_name = $sub_name;
                     }
                 }
@@ -1843,9 +1853,10 @@ Array ( [id] => 16524 [id_tur] => 502 [id_mp] => 3 [id_tourist] => 2991 [name_f]
                 $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
                 if ($id_program > 0){
                     $name = $this->Vals->getVal('name', 'POST', 'string');
+                    $city = $this->Vals->getVal('city', 'POST', 'string');
                     $country = $this->Vals->getVal('country', 'POST', 'string');
                     $overview = $this->Vals->getVal('overview', 'POST', 'string');
-                    $this->nModel->updProgram($id_program,$name,$country,$overview);
+                    $this->nModel->updProgram($id_program,$name,$country,$city,$overview);
                 }
                 $program = $this->nModel->getProgram($edit);
                 $this->nView->viewProgramEdit($program);

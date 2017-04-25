@@ -11,7 +11,7 @@
 			<link rel="stylesheet" href="/css/camera.css"/>
 			<link rel="stylesheet" href="/css/bootstrap.min.css?v2"/>
 			<link rel="stylesheet" href="/css/jquery-ui.css"/>
-			<link rel="stylesheet" href="/css/style.css?v3.1"/>
+			<link rel="stylesheet" href="/css/style.css?v3.2"/>
 			<link rel="stylesheet" href="/css/custom.css"/>
 			<link rel="stylesheet" href="/css/stylesheet.css"/>
 			<link rel="stylesheet" href="/css/system.css"/>
