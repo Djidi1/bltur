@@ -721,6 +721,12 @@ class tcModel extends module_model
         }
         return $items;
     }
+    public function delProgram($id_program)
+    {
+        $sql = "DELETE FROM tc_programs WHERE id = $id_program";
+        $this->query($sql);
+        return $this->affectedRows();
+    }
     public function updProgram($id_program,$name,$country,$city,$overview)
     {
         $overview = str_replace('%','%%', $overview);
@@ -729,6 +735,15 @@ class tcModel extends module_model
         $sql = "UPDATE tc_programs SET name='$name', country='$country',city='$city', overview='$overview', date='$date' WHERE id = $id_program";
         $this->query($sql);
         return $this->affectedRows();
+    }
+    public function insProgram($name,$country,$city,$overview)
+    {
+        $overview = str_replace('%','%%', $overview);
+        $overview = htmlentities(htmlspecialchars($overview));
+        $date = date('Y-m-d');
+        $sql = "INSERT INTO tc_programs (name,country,city,overview,date) VALUES ('$name','$country','$city','$overview','$date')";
+        $this->query($sql);
+        return $this->insertID();
     }
 
     public function getStoryList()
@@ -1849,17 +1864,26 @@ Array ( [id] => 16524 [id_tur] => 502 [id_mp] => 3 [id_tourist] => 2991 [name_f]
         }
         if ($action == 'viewStoryList') {
             $edit = $this->Vals->getVal('edit', 'GET', 'integer');
-            if ($edit > 0) {
+            if ($edit != NULL) {
                 $id_program = $this->Vals->getVal('id_program', 'POST', 'integer');
-                if ($id_program > 0){
+                $sub_action = $this->Vals->getVal('sub_action', 'POST', 'integer');
+                if ($sub_action == 'Удалить'){
+                    $this->nModel->delProgram($id_program);
+                    header("Location:/tc/viewStoryList-1/");
+                }else {
                     $name = $this->Vals->getVal('name', 'POST', 'string');
                     $city = $this->Vals->getVal('city', 'POST', 'string');
                     $country = $this->Vals->getVal('country', 'POST', 'string');
                     $overview = $this->Vals->getVal('overview', 'POST', 'string');
-                    $this->nModel->updProgram($id_program,$name,$country,$city,$overview);
+                    if ($id_program > 0) {
+                        $this->nModel->updProgram($id_program, $name, $country, $city, $overview);
+                    } elseif ($name != '') {
+                        $edit = $this->nModel->insProgram($name, $country, $city, $overview);
+                        header("Location:/tc/viewStoryList-1/edit-$edit/");
+                    }
+                    $program = ($edit > 0) ? $this->nModel->getProgram($edit) : array();
+                    $this->nView->viewProgramEdit($program);
                 }
-                $program = $this->nModel->getProgram($edit);
-                $this->nView->viewProgramEdit($program);
             } else {
                 $StoryList = $this->nModel->getStoryList();
                 $this->nView->viewStoryList($StoryList);

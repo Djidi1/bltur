@@ -27,7 +27,8 @@
                 Последние изменения программы:
                 <xsl:value-of select="item/date"/>
             </div>
-            <button class="btn btn-success">Сохранить</button>
+            <input type="submit" name="sub_action" value="Сохранить" class="btn btn-success"/>
+            <input type="submit" name="sub_action" value="Удалить" class="btn btn-danger" style="float:right;" onclick="return confirm('Удалить эту программу тура?')"/>
         </form>
     </xsl:template>
 </xsl:stylesheet>

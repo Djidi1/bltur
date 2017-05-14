@@ -4,7 +4,10 @@
 		<xsl:if test="//page/@isAjax != 1">
 			<div id="viewListlang">
 				<div class="panel panel-info">
-					<div class="panel-heading"><h3 style="margin: 0;">Программы туров</h3></div>
+					<div class="panel-heading">
+						<a href="/tc/viewStoryList-1/edit-0/" class="btn btn-success" style="float:right">Добавить программу</a>
+						<h3 style="margin: 0;">Программы туров</h3>
+					</div>
 					<div class="panel-body">
 						<xsl:call-template name="viewTable"/>
 					</div>
@@ -76,7 +79,7 @@
 							"sortDescending": ": активировать для сортировки столбца по убыванию"
 							}
 							},
-							stateSave: false,    // фиксирует запрос в строке поиска
+							stateSave: true,    // фиксирует запрос в строке поиска
 							fixedHeader: true,  // фиксирует заголовки таблиц
 							paging: false
 							//                columnDefs: [
@@ -88,6 +91,9 @@
 							};
 							$(document).ready(function() {
 							var sorting_table = $('.data-table').DataTable( table_options );
+
+							var data = localStorage.getItem('DataTables_DataTable2_' + window.location.pathname);
+							var saved_state = JSON.parse(data);
 
 							$(".data-table thead th").each(function (i) {
 							var col_name = $(this).html();
@@ -102,8 +108,14 @@
 							.draw();
 							});
 
+							var d_saved = saved_state.columns[i].search.search;
+							console.log(d_saved);
 							sorting_table.column(i).data().unique().sort().each(function (d) {
-							select.append('<option value="' + d + '">' + d + '</option>');
+							var d_var = d;
+							d_var = d_var.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+							var d_var = d_var ? '^' + d_var + '$' : '';
+							var opt_selected = d_var == d_saved ? 'selected' : '';
+							select.append('<option value="' + d + '" ' + opt_selected + '>' + d + '</option>');
 							});
 							}
 							});
